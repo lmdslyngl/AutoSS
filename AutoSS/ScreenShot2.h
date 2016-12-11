@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <Windows.h>
-
+#include "LZ4BatchedImage.h"
 
 /*
  * ウィンドウ部分のトリミング方法を設定
@@ -30,6 +30,9 @@ public:
 	// PNG書き出し
 	void WriteToPNG(const std::string &filename);
 	
+	// LZ4書き出し
+	void WriteToLZ4(const std::string &filename);
+	
 	// トリミング設定
 	void SetTrimmingMode(TRIMMING_MODE mode) {
 		this->TrimMode = mode;
@@ -52,5 +55,6 @@ protected:
 	int DesktopWidth, DesktopHeight;
 	std::shared_ptr<CaptureBase> pCap;
 	TRIMMING_MODE TrimMode;
+	std::unique_ptr<LZ4BatchedImage> pLz4Img;
 };
 

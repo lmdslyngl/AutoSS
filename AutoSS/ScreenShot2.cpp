@@ -50,6 +50,36 @@ void ScreenShot2::WriteToPNG(const std::string &filename) {
 	
 }
 
+// LZ4書き出し
+void ScreenShot2::WriteToLZ4(const std::string &filename) {
+	int width, height;
+	pCap->GetImageSize(&width, &height);
+	
+	if( !pLz4Img ) {
+		// LZ4BatchedImageがまだ無いときは作成
+		pLz4Img = std::make_unique<LZ4BatchedImage>();
+		pLz4Img->Setup(width, height, 20);
+	}
+	
+	int prevWidth, prevHeight;
+	pLz4Img->GetSize(&prevWidth, &prevHeight);
+	
+	if( prevWidth != width || prevHeight != height ) {
+		// 前のフレームと異なるサイズだったときは，強制的に書き出しと初期化
+		pLz4Img->CompressedWrite(filename);
+		pLz4Img->Setup(width, height, 20);
+	}
+	
+	pLz4Img->Add(pCap->GetData(), pCap->GetDataLength());
+	
+	if( pLz4Img->IsFull() ) {
+		// 画像が溜まったら書き出ししてリセット
+		pLz4Img->CompressedWrite(filename);
+		pLz4Img->Setup(width, height, 20);
+	}
+	
+}
+
 // ウィンドウの大きさを取得
 void ScreenShot2::GetWindowSize(HWND hWindow, int *pOutWidth, int *pOutHeight) {
 	RECT windowRect;

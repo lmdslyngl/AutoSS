@@ -12,6 +12,7 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "libpng.lib")
 #pragma comment(lib, "zlib.lib")
+#pragma comment(lib, "liblz4_static.lib")
 
 const int HOTKEY_TOGGLE = 0;
 const int HOTKEY_EXIT = 1;
@@ -112,6 +113,12 @@ void TakeSS() {
 			sprintf_s(name, "%sss_%s_%04d.ppm",
 				pSetting->GetSavePath().c_str(), savePrefix.c_str(), ctr);
 			pSS->WriteToPPM(name);
+			
+		} else if( pSetting->GetSaveFormat() == "lz4" ) {
+			char name[128];
+			sprintf_s(name, "%sss_%s_%04d.lz4",
+				pSetting->GetSavePath().c_str(), savePrefix.c_str(), ctr);
+			pSS->WriteToLZ4(name);
 			
 		} else {
 			char name[128];
