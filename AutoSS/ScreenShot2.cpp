@@ -45,11 +45,6 @@ void ScreenShot2::WriteToPPM(const std::string &filename) {
 	
 }
 
-// PNG書き出し
-void ScreenShot2::WriteToPNG(const std::string &filename) {
-	
-}
-
 // LZ4書き出し
 void ScreenShot2::WriteToLZ4(const std::string &filename) {
 	int width, height;

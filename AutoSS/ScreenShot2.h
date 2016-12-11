@@ -27,9 +27,6 @@ public:
 	// PPM書き出し
 	void WriteToPPM(const std::string &filename);
 
-	// PNG書き出し
-	void WriteToPNG(const std::string &filename);
-	
 	// LZ4書き出し
 	void WriteToLZ4(const std::string &filename);
 	
