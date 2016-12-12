@@ -3,31 +3,9 @@
 #include <lz4.h>
 #include <fstream>
 #include <algorithm>
+#include <functional>
 
-void LZ4BatchedImage::Setup(int width, int height, int batchSize) {
-	this->Width = width;
-	this->Height = height;
-	Count = 0;
-	this->BatchSize = batchSize;
-	Stride = width * height * 3;
-	vecBuffer.resize(Stride * BatchSize);
-}
-
-void LZ4BatchedImage::Add(const unsigned char *data, int length) {
-	// 既にバッファがいっぱいだったときは，何もしない
-	if( IsFull() ) return;
-	
-	unsigned char *dst = vecBuffer.data() + Count;
-	for( int i = 0; i < length; i++ ) {
-		*dst = *data;
-		data++;
-		dst += BatchSize;
-	}
-	Count++;
-	
-}
-
-void LZ4BatchedImage::CompressedWrite(const std::string &filename) {
+void CompressedImageWriter::Write(const std::string &filename) {
 	LZ4_stream_t stream;
 	LZ4_resetStream(&stream);
 	
@@ -76,6 +54,52 @@ void LZ4BatchedImage::CompressedWrite(const std::string &filename) {
 	
 	ofs.close();
 	
+}
+
+
+
+LZ4BatchedImage::~LZ4BatchedImage() {
+	if( WritingThread.joinable() ) WritingThread.join();
+}
+
+void LZ4BatchedImage::Setup(int width, int height, int batchSize) {
+	this->Width = width;
+	this->Height = height;
+	Count = 0;
+	this->BatchSize = batchSize;
+	Stride = width * height * 3;
+	
+	pWriter = std::make_shared<CompressedImageWriter>(
+		BatchSize, Stride, width, height);
+	
+}
+
+void LZ4BatchedImage::Add(const unsigned char *data, int length) {
+	// 既にバッファがいっぱいだったときは，何もしない
+	if( IsFull() ) return;
+	
+	unsigned char *dst = pWriter->GetBufferPtr() + Count;
+	for( int i = 0; i < length; i++ ) {
+		*dst = *data;
+		data++;
+		dst += BatchSize;
+	}
+	Count++;
+	
+}
+
+void LZ4BatchedImage::CompressedWrite(const std::string &filename) {
+	auto threadFunc = [this, filename]() {
+		this->ThreadRunningFlag = true;
+		auto pWriter = this->pWriter;
+		pWriter->Write(filename);
+		this->ThreadRunningFlag = false;
+	};
+	if( !ThreadRunningFlag ) {
+		pWriter->SetCount(this->Count);
+		if( WritingThread.joinable() ) WritingThread.detach();
+		WritingThread = std::thread(threadFunc);
+	}
 }
 
 
