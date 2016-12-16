@@ -69,12 +69,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\lib;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\visual\VS2010\bin\x64_Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Develop\C\AutoSS\lib\libpng;D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\lib;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Develop\C\AutoSS\lib\zlib;D:\Develop\C\AutoSS\lib\libpng;D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\visual\VS2010\bin\x64_Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\lib;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\visual\VS2010\bin\x64_Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Develop\C\AutoSS\lib\libpng;D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\lib;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Develop\C\AutoSS\lib\zlib;D:\Develop\C\AutoSS\lib\libpng;D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\visual\VS2010\bin\x64_Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

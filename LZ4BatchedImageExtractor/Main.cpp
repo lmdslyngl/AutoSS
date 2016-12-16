@@ -4,11 +4,14 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <png.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
 #pragma comment(lib, "liblz4_static.lib")
+#pragma comment(lib, "libpng.lib")
+#pragma comment(lib, "zlib.lib")
 
 constexpr int BLOCK_SIZE = 1024 * 64;
 
@@ -63,6 +66,59 @@ void ReadAndDecompress(
 	
 }
 
+void PNGWriteFunc(png_structp pPng, png_bytep data, png_size_t length) {
+	auto pVecBuffer = (std::vector<unsigned char>*)png_get_io_ptr(pPng);
+	int start = pVecBuffer->size();
+	pVecBuffer->resize(pVecBuffer->size() + length);
+	memcpy(pVecBuffer->data() + start, data, length);
+}
+void PNGFlushFunc(png_structp pPng) { }
+
+void WritePNG(
+	std::vector<unsigned char> &vecOut,
+	const std::vector<unsigned char> &vecIn,
+	int width, int height)
+{
+	
+	png_structp pPng = nullptr;
+	pPng = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+	if( !pPng ) {
+		throw std::exception("Failed to png_create_write_struct");
+	}
+	
+	png_infop pInfo = nullptr;
+	pInfo = png_create_info_struct(pPng);
+	if( !pInfo ) {
+		throw std::exception("Failed to png_create_info_struct");
+	}
+	
+	// メモリ書き込みコールナック設定
+	png_set_write_fn(pPng, &vecOut, PNGWriteFunc, PNGFlushFunc);
+	
+	// 画像情報設定
+	png_set_IHDR(
+		pPng, pInfo,
+		width, height, 8,
+		PNG_COLOR_TYPE_RGB,
+		PNG_INTERLACE_NONE,
+		PNG_COMPRESSION_TYPE_DEFAULT,
+		PNG_FILTER_TYPE_DEFAULT);
+	png_write_info(pPng, pInfo);
+	
+	// 画像書き出し
+	const unsigned char *cursor = vecIn.data();
+	int pitch = width * 3;
+	for( int i = 0; i < height; i++ ) {
+		png_write_row(pPng, cursor);
+		cursor += pitch;
+	}
+	png_write_end(pPng, pInfo);
+	
+	png_free_data(pPng, pInfo, PNG_FREE_ALL, -1);
+	png_destroy_write_struct(&pPng, nullptr);
+	
+}
+
 int main(int argc, char *argv[]) {
 	
 	if( argc < 2 ) {
@@ -95,9 +151,11 @@ int main(int argc, char *argv[]) {
 		}
 		
 		// PNGで書き出し
-		stbi_write_png(filename.c_str(),
-			head.Width, head.Height, 3,
-			vecImagePixels.data(), 0);
+		std::vector<unsigned char> vecData;
+		WritePNG(vecData, vecImagePixels, head.Width, head.Height);
+		std::ofstream ofs(filename, std::ios::binary);
+		ofs.write((const char*)vecData.data(), vecData.size());
+		ofs.close();
 		
 	}
 	
