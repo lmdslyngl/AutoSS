@@ -35,12 +35,6 @@ public:
 		pWriter->Write(filename, width, height, pCap->GetData(), pCap->GetDataLength());
 	}
 	
-	// PPM書き出し
-	void WriteToPPM(const std::string &filename);
-
-	// LZ4書き出し
-	void WriteToLZ4(const std::string &filename);
-	
 	// トリミング設定
 	void SetTrimmingMode(TRIMMING_MODE mode) {
 		this->TrimMode = mode;
