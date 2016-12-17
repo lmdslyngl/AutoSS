@@ -6,6 +6,7 @@
 #include "Setting.h"
 #include "BitBltCapture.h"
 #include "DesktopDuplCapture.h"
+#include "ImageWriterPPM.h"
 #include <iostream>
 
 #pragma comment(lib, "dwmapi.lib")
@@ -20,6 +21,7 @@ bool ScreenShotting = false;
 int ctr = 0;
 std::string savePrefix;
 std::unique_ptr<ScreenShot2> pSS;
+std::shared_ptr<ImageWriterBase> pImageWriter;
 std::unique_ptr<Setting> pSetting;
 
 ITaskbarList3 *pTaskbar = nullptr;
@@ -54,6 +56,11 @@ int main(int argc, char *argv[]) {
 	// スクリーンショットクラス
 	pSS = std::make_unique<ScreenShot2>(pCap);
 	pSS->SetTrimmingMode(pSetting->GetTrimmingMode());
+	
+	// 画像書き出しクラス
+	if( pSetting->GetSaveFormat() == "ppm" ) {
+		pImageWriter = std::make_shared<ImageWriterPPM>();
+	}
 	
 	// スクリーンショット開始/終了ホットキー
 	RegisterHotKey(
@@ -106,19 +113,12 @@ void TakeSS() {
 	if( hCaptureWindow ) {
 		pSS->TakeScreenShot(hCaptureWindow);
 		
-		if( pSetting->GetSaveFormat() == "ppm" ) {
-			char name[128];
-			sprintf_s(name, "%sss_%s_%04d.ppm",
-				pSetting->GetSavePath().c_str(), savePrefix.c_str(), ctr);
-			pSS->WriteToPPM(name);
-			
-		} else if( pSetting->GetSaveFormat() == "lz4" ) {
-			char name[128];
-			sprintf_s(name, "%sss_%s_%04d.lz4",
-				pSetting->GetSavePath().c_str(), savePrefix.c_str(), ctr);
-			pSS->WriteToLZ4(name);
-			
-		}
+		char name[128];
+		sprintf_s(name, "%sss_%s_%04d.%s",
+			pSetting->GetSavePath().c_str(), savePrefix.c_str(), ctr,
+			pSetting->GetSaveFormat().c_str());
+		
+		pSS->WriteImage(name, pImageWriter);
 		
 		ctr++;
 		
@@ -139,6 +139,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 			if( ScreenShotting ) {
 				std::cout << "Capture started" << std::endl;
 				
+				pImageWriter->BeginCapture();
+				
 				savePrefix = GetNowDate();
 				ctr = 0;
 				
@@ -147,6 +149,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 				pTaskbar->SetProgressValue(hConWindow, 1, 1);
 				
 			} else {
+				pImageWriter->EndCapture();
+				
 				KillTimer(hwnd, TIMER_SS);
 				pTaskbar->SetProgressState(hConWindow, TBPF_NOPROGRESS);
 				

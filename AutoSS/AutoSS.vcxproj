@@ -31,6 +31,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="ImageWriterPPM.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="LZ4BatchedImage.cpp">
       <SubType>
       </SubType>
@@ -62,6 +66,14 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="DummyWindow.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="ImageWriterBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="ImageWriterPPM.h">
       <SubType>
       </SubType>
     </ClInclude>
