@@ -6,9 +6,6 @@
 #include <vector>
 #include <png.h>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 #pragma comment(lib, "liblz4_static.lib")
 #pragma comment(lib, "libpng.lib")
 #pragma comment(lib, "zlib.lib")
