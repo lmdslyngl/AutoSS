@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <png.h>
+#include <ppl.h>
+#include <mutex>
 
 #pragma comment(lib, "liblz4_static.lib")
 #pragma comment(lib, "libpng.lib")
@@ -132,13 +134,22 @@ int main(int argc, char *argv[]) {
 	ReadAndDecompress(&head, vecDecompressedData, ifs);
 	ifs.close();
 	
-	std::vector<unsigned char> vecImagePixels(head.Stride);
-	for( int i = 0; i < head.Count; i++ ) {
+	// stdout用のmutex
+	std::mutex mtxStdout;
+	
+	// 並列PNG変換
+	concurrency::parallel_for(0, head.Count, [&](int i) {
 		std::string filename =
 			batchname.substr(0, batchname.rfind('.'))
 			+ '_' + std::to_string(i) + ".png";
-		std::cout << "\rwriting: " << filename;
 		
+		{
+			std::lock_guard<std::mutex> lock(mtxStdout);
+			std::cout << "writing: " << i << std::endl;
+		}
+		
+		// ピクセルを並べ替える
+		std::vector<unsigned char> vecImagePixels(head.Stride);
 		unsigned char *dst = vecImagePixels.data();
 		const unsigned char *src = vecDecompressedData.data() + i;
 		for( int j = 0; j < head.Stride; j++ ) {
@@ -148,15 +159,15 @@ int main(int argc, char *argv[]) {
 		}
 		
 		// PNGで書き出し
-		std::vector<unsigned char> vecData;
-		WritePNG(vecData, vecImagePixels, head.Width, head.Height);
+		std::vector<unsigned char> vecPNGData;
+		WritePNG(vecPNGData, vecImagePixels, head.Width, head.Height);
 		std::ofstream ofs(filename, std::ios::binary);
-		ofs.write((const char*)vecData.data(), vecData.size());
+		ofs.write((const char*)vecPNGData.data(), vecPNGData.size());
 		ofs.close();
 		
-	}
+	});
 	
-	std::cout << std::endl;
+	std::cout << "finished!" << std::endl;
 	
 	return 0;
 	
