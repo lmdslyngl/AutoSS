@@ -10,7 +10,7 @@ public:
 		const std::string &filename,
 		int width, int height,
 		const unsigned char *data,
-		unsigned int length) = 0;
+		size_t length) = 0;
 	
 	// 連続撮影開始
 	virtual void BeginCapture() = 0;

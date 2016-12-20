@@ -75,8 +75,6 @@ void DesktopDuplCapture::Setup() {
 
 // 領域のキャプチャを行う
 void DesktopDuplCapture::CaptureRegion(const RECT *region) {
-	HRESULT hr;
-	
 	RegionWidth = region->right - region->left;
 	RegionHeight = region->bottom - region->top;
 	vecRegionImg.resize(RegionWidth * RegionHeight * 3);
@@ -123,7 +121,7 @@ const unsigned char *DesktopDuplCapture::GetData() const {
 }
 
 // 画像データの長さを取得
-unsigned int DesktopDuplCapture::GetDataLength() const {
+size_t DesktopDuplCapture::GetDataLength() const {
 	return vecRegionImg.size();
 }
 

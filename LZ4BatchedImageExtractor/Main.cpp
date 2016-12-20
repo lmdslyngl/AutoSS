@@ -67,7 +67,7 @@ void ReadAndDecompress(
 
 void PNGWriteFunc(png_structp pPng, png_bytep data, png_size_t length) {
 	auto pVecBuffer = (std::vector<unsigned char>*)png_get_io_ptr(pPng);
-	int start = pVecBuffer->size();
+	size_t start = pVecBuffer->size();
 	pVecBuffer->resize(pVecBuffer->size() + length);
 	memcpy(pVecBuffer->data() + start, data, length);
 }

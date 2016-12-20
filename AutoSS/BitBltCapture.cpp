@@ -101,7 +101,7 @@ const unsigned char *BitBltCapture::GetData() const {
 }
 
 // 画像データの長さを取得
-unsigned int BitBltCapture::BitBltCapture::GetDataLength() const {
+size_t BitBltCapture::BitBltCapture::GetDataLength() const {
 	return CapturedImageRGB.size();
 }
 

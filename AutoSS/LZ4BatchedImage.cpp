@@ -29,7 +29,7 @@ void CompressedImageWriter::Write(const std::string &filename) {
 		char *buf = doubleBuf[bufidx];
 		memset(buf, 0, BLOCK_SIZE);
 		
-		int available = srcEnd - src;
+		int available = (int)(srcEnd - src);
 		int compressSize = std::min(available, BLOCK_SIZE);
 		memcpy(buf, src, compressSize);
 		src += compressSize;
@@ -74,7 +74,7 @@ void LZ4BatchedImage::Setup(int width, int height, int batchSize) {
 	
 }
 
-void LZ4BatchedImage::Add(const unsigned char *data, int length) {
+void LZ4BatchedImage::Add(const unsigned char *data, size_t length) {
 	// 既にバッファがいっぱいだったときは，何もしない
 	if( IsFull() ) return;
 	

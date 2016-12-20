@@ -16,7 +16,7 @@ public:
 		const std::string &filename,
 		int width, int height,
 		const unsigned char *data,
-		unsigned int length);
+		size_t length);
 	
 	// 連続撮影開始
 	virtual void BeginCapture();

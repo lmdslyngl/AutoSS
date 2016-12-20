@@ -22,7 +22,7 @@ public:
 	unsigned char *GetBufferPtr() {
 		return vecBuffer.data();
 	}
-	int GetBufferSize() const {
+	size_t GetBufferSize() const {
 		return vecBuffer.size();
 	}
 	
@@ -48,7 +48,7 @@ public:
 	~LZ4BatchedImage();
 	
 	void Setup(int width, int height, int batchSize);
-	void Add(const unsigned char *data, int length);
+	void Add(const unsigned char *data, size_t length);
 	
 	void CompressedWrite(const std::string &filename);
 	

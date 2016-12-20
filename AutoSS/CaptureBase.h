@@ -15,7 +15,7 @@ public:
 	virtual const unsigned char *GetData() const = 0;
 	
 	// 画像データの長さを取得
-	virtual unsigned int GetDataLength() const = 0;
+	virtual size_t GetDataLength() const = 0;
 	
 	// 画像のサイズを取得
 	virtual void GetImageSize(int *pOutWidth, int *pOutHeight) = 0;

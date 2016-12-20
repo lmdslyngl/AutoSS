@@ -7,7 +7,7 @@ void ImageWriterPPM::Write(
 	const std::string &filename,
 	int width, int height,
 	const unsigned char *data,
-	unsigned int length)
+	size_t length)
 {
 	
 	std::ofstream ofs(filename, std::ios::binary);
