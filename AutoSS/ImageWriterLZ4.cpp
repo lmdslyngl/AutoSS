@@ -46,6 +46,7 @@ void ImageWriterLZ4::BeginCapture() { }
 void ImageWriterLZ4::EndCapture() {
 	// 連写終了後は強制的に画像を書き出し
 	Flush();
+	pLZ4Img.release();
 }
 
 // 画像を書き出し
