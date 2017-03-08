@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include <Windows.h>
-#include "LZ4BatchedImage.h"
 #include "ImageWriterBase.h"
 
 /*
@@ -57,6 +56,5 @@ protected:
 	int DesktopWidth, DesktopHeight;
 	std::shared_ptr<CaptureBase> pCap;
 	TRIMMING_MODE TrimMode;
-	std::unique_ptr<LZ4BatchedImage> pLz4Img;
 };
 

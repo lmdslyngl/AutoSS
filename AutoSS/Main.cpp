@@ -7,12 +7,10 @@
 #include "BitBltCapture.h"
 #include "DesktopDuplCapture.h"
 #include "ImageWriterPPM.h"
-#include "ImageWriterLZ4.h"
 #include <iostream>
 
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "liblz4_static.lib")
 
 const int HOTKEY_TOGGLE = 0;
 const int HOTKEY_EXIT = 1;
@@ -61,8 +59,6 @@ int main(int argc, char *argv[]) {
 	// 画像書き出しクラス
 	if( pSetting->GetSaveFormat() == "ppm" ) {
 		pImageWriter = std::make_shared<ImageWriterPPM>();
-	} else if( pSetting->GetSaveFormat() == "lz4" ) {
-		pImageWriter = std::make_shared<ImageWriterLZ4>();
 	}
 	
 	// スクリーンショット開始/終了ホットキー

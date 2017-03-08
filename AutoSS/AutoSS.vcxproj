@@ -31,15 +31,7 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="ImageWriterLZ4.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="ImageWriterPPM.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="LZ4BatchedImage.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -77,15 +69,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="ImageWriterLZ4.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="ImageWriterPPM.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LZ4BatchedImage.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -152,14 +136,8 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\lib;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\visual\VS2010\bin\x64_Debug;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\lib;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Develop\C\AutoSS\lib\lz4-1.7.4.2\visual\VS2010\bin\x64_Release;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
