@@ -4,9 +4,6 @@
 #include <vector>
 #include <string>
 
-// スクリーンショット撮影&保存
-void TakeSS();
-
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
 // 現在の日時を取得

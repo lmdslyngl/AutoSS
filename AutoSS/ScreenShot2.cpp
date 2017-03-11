@@ -4,30 +4,31 @@
 #include <fstream>
 #include <dwmapi.h>
 
-ScreenShot2::ScreenShot2(std::shared_ptr<CaptureBase> &pCap) {
+ScreenShot2::ScreenShot2(
+	std::shared_ptr<CaptureBase> &pCap,
+	std::shared_ptr<ImageWriterBase> &pWriter,
+	const std::string &savePathFormat,
+	int waitTimeMillisec,
+	TRIMMING_MODE trimMode)
+{
+	
 	this->pCap = pCap;
+	this->pWriter = pWriter;
+	this->SavePathFormat = savePathFormat;
+	this->TrimMode = trimMode;
+	
 	HWND hDesktopWindow = GetDesktopWindow();
 	GetWindowSize(hDesktopWindow, &DesktopWidth, &DesktopHeight);
+	
+	pTimer = std::make_unique<TimerExec>(
+		[this](void *ptr) { this->TakeSSFunc(ptr); },
+		waitTimeMillisec);
+	
 }
 
-// スクリーンショット撮影
-void ScreenShot2::TakeScreenShot(HWND hCaptureWindow) {
-	if( !hCaptureWindow ) return;
-	
-	RECT windowRect = GetWindowRegion(hCaptureWindow);
-	
-	// 範囲外の領域は無視
-	if( windowRect.left < 0 ) windowRect.left = 0;
-	if( DesktopWidth < windowRect.right ) windowRect.right = DesktopWidth;
-	if( windowRect.top < 0 ) windowRect.top = 0;
-	if( DesktopHeight < windowRect.bottom ) windowRect.bottom = DesktopHeight;
-	
-	pCap->CaptureRegion(&windowRect);
-	
-}
 
 // ウィンドウの大きさを取得
-void ScreenShot2::GetWindowSize(HWND hWindow, int *pOutWidth, int *pOutHeight) {
+void ScreenShot2::GetWindowSize(HWND hWindow, int *pOutWidth, int *pOutHeight) const {
 	RECT windowRect;
 	GetWindowRect(hWindow, &windowRect);
 	
@@ -37,7 +38,7 @@ void ScreenShot2::GetWindowSize(HWND hWindow, int *pOutWidth, int *pOutHeight) {
 }
 
 // トリミングするの領域を取得
-RECT ScreenShot2::GetWindowRegion(HWND hCaptureWindow) {
+RECT ScreenShot2::GetWindowRegion(HWND hCaptureWindow) const {
 	RECT region;
 	
 	switch( TrimMode ) {
@@ -73,5 +74,40 @@ RECT ScreenShot2::GetWindowRegion(HWND hCaptureWindow) {
 	
 }
 
+// 画面外に出た領域をクランプする
+RECT ScreenShot2::ClampOutOfRegion(const RECT &region) const {
+	RECT clampedRegion = region;
+	
+	// 範囲外の領域は無視
+	if( region.left < 0 ) clampedRegion.left = 0;
+	if( DesktopWidth < region.right ) clampedRegion.right = DesktopWidth;
+	if( region.top < 0 ) clampedRegion.top = 0;
+	if( DesktopHeight < region.bottom ) clampedRegion.bottom = DesktopHeight;
+	
+	return clampedRegion;
+	
+}
+
+
+// スクリーンショット撮影
+void ScreenShot2::TakeSSFunc(void *ptr) {
+	HWND hCaptureWindow = GetForegroundWindow();
+	RECT windowRect = GetWindowRegion(hCaptureWindow);
+	windowRect = ClampOutOfRegion(windowRect);
+	
+	pCap->CaptureRegion(&windowRect);
+	
+	int sswidth, ssheight;
+	pCap->GetImageSize(&sswidth, &ssheight);
+	
+	char savename[128];
+	sprintf_s(savename, SavePathFormat.c_str(), SSCtr);
+	
+	pWriter->Write(savename, sswidth, ssheight,
+		pCap->GetData(), pCap->GetDataLength());
+	
+	SSCtr++;
+	
+}
 
 

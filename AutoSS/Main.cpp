@@ -14,11 +14,8 @@
 
 const int HOTKEY_TOGGLE = 0;
 const int HOTKEY_EXIT = 1;
-const int TIMER_SS = 0;
 
 bool ScreenShotting = false;
-int ctr = 0;
-std::string savePrefix;
 std::unique_ptr<ScreenShot2> pSS;
 std::shared_ptr<ImageWriterBase> pImageWriter;
 std::unique_ptr<Setting> pSetting;
@@ -52,14 +49,16 @@ int main(int argc, char *argv[]) {
 		pCap = pCapDD;
 	}
 	
-	// スクリーンショットクラス
-	pSS = std::make_unique<ScreenShot2>(pCap);
-	pSS->SetTrimmingMode(pSetting->GetTrimmingMode());
-	
 	// 画像書き出しクラス
 	if( pSetting->GetSaveFormat() == "ppm" ) {
 		pImageWriter = std::make_shared<ImageWriterPPM>();
 	}
+	
+	// スクリーンショットクラス
+	pSS = std::make_unique<ScreenShot2>(
+		pCap, pImageWriter, "",
+		pSetting->GetWait(),
+		pSetting->GetTrimmingMode());
 	
 	// スクリーンショット開始/終了ホットキー
 	RegisterHotKey(
@@ -93,10 +92,6 @@ int main(int argc, char *argv[]) {
 	UnregisterHotKey(pWindow->GetWindowHandle(), HOTKEY_TOGGLE);
 	UnregisterHotKey(pWindow->GetWindowHandle(), HOTKEY_EXIT);
 	
-	if( ScreenShotting ) {
-		KillTimer(pWindow->GetWindowHandle(), TIMER_SS);
-	}
-	
 	pTaskbar->Release();
 	pTaskbar = nullptr;
 	
@@ -104,24 +99,6 @@ int main(int argc, char *argv[]) {
 	
 	return 0;
 	
-}
-
-// スクリーンショット撮影&保存
-void TakeSS() {
-	HWND hCaptureWindow = GetForegroundWindow();
-	if( hCaptureWindow ) {
-		pSS->TakeScreenShot(hCaptureWindow);
-		
-		char name[128];
-		sprintf_s(name, "%sss_%s_%04d.%s",
-			pSetting->GetSavePath().c_str(), savePrefix.c_str(), ctr,
-			pSetting->GetSaveFormat().c_str());
-		
-		pSS->WriteImage(name, pImageWriter);
-		
-		ctr++;
-		
-	}
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
@@ -140,21 +117,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 				
 				pImageWriter->BeginCapture();
 				
-				savePrefix = GetNowDate();
-				ctr = 0;
+				std::string datestr = GetNowDate();
+				char saveFormat[128];
+				sprintf_s(saveFormat, "%sss_%s_%%04d.%s",
+					pSetting->GetSavePath().c_str(),
+					datestr.c_str(),
+					pSetting->GetSaveFormat().c_str());
 				
-				SetTimer(hwnd, TIMER_SS, pSetting->GetWait(), nullptr);
+				pSS->SetSavePathFormat(saveFormat);
+				pSS->Start();
+				
 				pTaskbar->SetProgressState(hConWindow, TBPF_NORMAL);
 				pTaskbar->SetProgressValue(hConWindow, 1, 1);
 				
 			} else {
+				pSS->Stop();
 				pImageWriter->EndCapture();
-				
-				KillTimer(hwnd, TIMER_SS);
 				pTaskbar->SetProgressState(hConWindow, TBPF_NOPROGRESS);
 				
-				std::cout << "\nCapture stopped: "
-					<< ctr << " files captured" << std::endl;
+				std::cout << "\nCapture stopped" << std::endl;
 				
 			}
 			
@@ -163,12 +144,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 			PostQuitMessage(0);
 			
 		}
-		break;
-		
-	case WM_TIMER:
-		// スクリーンショット撮影
-		std::cout << "\rCapturing " << ctr << std::flush;
-		TakeSS();
 		break;
 		
 	}
