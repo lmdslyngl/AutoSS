@@ -72,6 +72,14 @@ public:
 		if( RunnerThread.joinable() ) RunnerThread.join();
 	}
 	
+	void SetWaitTime(int waitTime) {
+		this->WaitTime = waitTime;
+	}
+	
+	int GetWaitTime() const {
+		return WaitTime;
+	}
+	
 private:
 	static void RunnerThreadFunc(TimerExec *pSelf) {
 		while( pSelf->RunningFlag ) {
