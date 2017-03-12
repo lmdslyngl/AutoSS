@@ -7,6 +7,7 @@
 #include "BitBltCapture.h"
 #include "DesktopDuplCapture.h"
 #include "ImageWriterPPM.h"
+#include "ImageWriterBMP.h"
 #include <iostream>
 
 #pragma comment(lib, "dwmapi.lib")
@@ -52,6 +53,8 @@ int main(int argc, char *argv[]) {
 	// 画像書き出しクラス
 	if( pSetting->GetSaveFormat() == "ppm" ) {
 		pImageWriter = std::make_shared<ImageWriterPPM>();
+	} else if( pSetting->GetSaveFormat() == "bmp" ) {
+		pImageWriter = std::make_shared<ImageWriterBMP>();
 	}
 	
 	// スクリーンショットクラス

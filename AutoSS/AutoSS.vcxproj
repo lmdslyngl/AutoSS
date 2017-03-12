@@ -31,6 +31,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="ImageWriterBMP.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="ImageWriterPPM.cpp">
       <SubType>
       </SubType>
@@ -66,6 +70,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="ImageWriterBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="ImageWriterBMP.h">
       <SubType>
       </SubType>
     </ClInclude>
