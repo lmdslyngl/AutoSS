@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 	if( FAILED(hr) ) return 4;
 	
 	hConWindow = GetConsoleHWND();
-	SetConsoleTitle("AutoSS");
+	SetConsoleTitle(L"AutoSS");
 	
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
@@ -167,7 +167,7 @@ std::string GetNowDate() {
 
 // コマンドプロンプトのウィンドウハンドルを取得
 HWND GetConsoleHWND() {
-	char title[1024];
+	wchar_t title[1024];
 	GetConsoleTitle(title, 1024);
 	return FindWindow(nullptr, title);
 }

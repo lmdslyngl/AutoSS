@@ -6,7 +6,7 @@
 */
 DummyWindow::~DummyWindow() {
 	DestroyWindow(hWindowDummy);
-	UnregisterClass("DUMMYWINDOW", hInstance);
+	UnregisterClass(L"DUMMYWINDOW", hInstance);
 }
 
 bool DummyWindow::Setup(HINSTANCE hInstance, WNDPROC pFuncWndProc) {
@@ -36,12 +36,12 @@ bool DummyWindow::CreateDummyWindow(WNDPROC pFuncWndProc) {
 	winc.hCursor		= LoadCursor(hInstance, IDC_ARROW);
 	winc.hbrBackground	= GetSysColorBrush(COLOR_BTNFACE);
 	winc.lpszMenuName	= NULL;
-	winc.lpszClassName	= "DUMMYWINDOW";
+	winc.lpszClassName	= L"DUMMYWINDOW";
 	
 	if( !RegisterClassEx(&winc) ) return false;
 	
 	hWindowDummy = CreateWindow(
-		"DUMMYWINDOW", "DummyWindow", 0,
+		L"DUMMYWINDOW", L"DummyWindow", 0,
 		0, 0, 100, 100,
 		nullptr, nullptr, hInstance, nullptr
 	);
