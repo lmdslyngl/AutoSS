@@ -23,6 +23,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="DesktopDuplCapture.cpp">
       <SubType>
       </SubType>
@@ -68,6 +72,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="CaptureBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Config.h">
       <SubType>
       </SubType>
     </ClInclude>
