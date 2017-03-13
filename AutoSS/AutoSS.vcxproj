@@ -42,12 +42,22 @@
     <ClCompile Include="Main.cpp">
       <SubType>
       </SubType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Main2.cpp">
+      <SubType>
+      </SubType>
     </ClCompile>
     <ClCompile Include="ScreenShot2.cpp">
       <SubType>
       </SubType>
     </ClCompile>
     <ClCompile Include="Setting.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -84,6 +94,8 @@
     <ClInclude Include="Main.h">
       <SubType>
       </SubType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="ScreenShot2.h">
       <SubType>
@@ -94,11 +106,15 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="TimerExec.h" />
+    <ClInclude Include="UI.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92CE6C90-ACF1-4CE1-884D-1071523323BE}</ProjectGuid>
     <RootNamespace>AutoSS</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -145,8 +161,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.0\lib\vc_x64_dll;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.0\lib\vc_x64_dll;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
