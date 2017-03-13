@@ -54,11 +54,6 @@ bool DummyWindow::CreateDummyWindow(WNDPROC pFuncWndProc) {
 
 // デフォルトのウィンドウプロシージャ
 LRESULT CALLBACK DummyWindow::DefaultWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
-	switch( msg ) {
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	}
 	return DefWindowProc(hwnd, msg, wp, lp);
 }
 
