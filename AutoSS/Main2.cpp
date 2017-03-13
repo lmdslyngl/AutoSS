@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <functional>
+#include <time.h>
 
 #include "UI.h"
 #include "BitBltCapture.h"
@@ -25,7 +26,12 @@ public:
 	virtual bool OnInit();
 	
 private:
+	
+	// ScreenShotクラスを作成
 	std::unique_ptr<ScreenShot2> CreateSS();
+	
+	// 現在時刻を文字列で返す
+	std::string GetDateString() const;
 	
 	void OnStart();
 	void OnStop();
@@ -107,7 +113,7 @@ std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS() {
 	
 	// スクリーンショットクラス
 	auto pSS = std::make_unique<ScreenShot2>(
-		pCap, pImageWriter, "C:\\temp\\%04d.bmp",
+		pCap, pImageWriter, "",
 		pSetting->GetWait(),
 		pSetting->GetTrimmingMode());
 	
@@ -115,8 +121,30 @@ std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS() {
 	
 }
 
+// 現在時刻を文字列で返す
+std::string AutoSSApp::GetDateString() const {
+	time_t now = time(nullptr);
+	tm tmnow;
+	localtime_s(&tmnow, &now);
+	
+	char timestr[16];
+	sprintf_s(timestr, "%02d%02d%02d%02d%02d%02d",
+		tmnow.tm_year % 100, tmnow.tm_mon + 1, tmnow.tm_mday,
+		tmnow.tm_hour, tmnow.tm_min, tmnow.tm_sec
+	);
+	
+	return timestr;
+	
+}
+
 void AutoSSApp::OnStart() {
+	// スクリーンショットのファイル名フォーマット設定
+	std::string nameFormat = pSetting->GetSavePath()
+		+ "ss_" + GetDateString() + "_%04d." + pSetting->GetSaveFormat();
+	pSS->SetSavePathFormat(nameFormat);
+	
 	pSS->Start();
+	
 }
 
 void AutoSSApp::OnStop() {
