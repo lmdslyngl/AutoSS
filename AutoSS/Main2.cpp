@@ -12,7 +12,7 @@
 #include "ImageWriterBMP.h"
 #include "ImageWriterPPM.h"
 #include "ScreenShot2.h"
-#include "Setting.h"
+#include "Config.h"
 
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -24,21 +24,22 @@
 class AutoSSApp : public wxApp {
 public:
 	virtual bool OnInit();
+	virtual int OnExit();
 	
 private:
 	
 	// ScreenShotクラスを作成
-	std::unique_ptr<ScreenShot2> CreateSS();
+	std::unique_ptr<ScreenShot2> CreateSS(const std::shared_ptr<Config> &pConf);
 	
 	// 現在時刻を文字列で返す
 	std::string GetDateString() const;
 	
 	void OnStart();
 	void OnStop();
-	void OnChangeConf();
+	void OnChangeConf(const std::shared_ptr<Config> &pConf);
 	
 private:
-	std::unique_ptr<Setting> pSetting;
+	std::shared_ptr<Config> pConf;
 	std::unique_ptr<ScreenShot2> pSS;
 };
 
@@ -49,13 +50,30 @@ wxIMPLEMENT_APP(AutoSSApp);
 bool AutoSSApp::OnInit() {
 	if( !wxApp::OnInit() ) return false;
 	
-	pSS = CreateSS();
+	// 設定ファイル読み込み
+	pConf = std::make_unique<Config>();
+	try {
+		pConf->Load("AutoSS.ini");
+	} catch( std::exception &e ) {
+		wxMessageBox(
+			"設定ファイルの読み込みに失敗しました\n" + std::string(e.what()),
+			"AutoSS",
+			wxOK | wxICON_ERROR);
+		return nullptr;
+	}
+	
+	pSS = CreateSS(pConf);
 	if( !pSS ) return false;
 	
 	AutoSSFrame *pFrame = new AutoSSFrame();
 	pFrame->SetOnStartFunc([this]() { this->OnStart(); });
 	pFrame->SetOnStopFunc([this]() { this->OnStop(); });
-	pFrame->SetOnChangeConfFunc([this]() { this->OnChangeConf(); });
+	pFrame->SetOnChangeConfFunc(
+		[this](const std::shared_ptr<Config> &pConf) {
+			this->OnChangeConf(pConf);
+		}
+	);
+	pFrame->SetOnGetConf([this]() { return pConf; });
 	
 	pFrame->Show();
 	
@@ -63,27 +81,22 @@ bool AutoSSApp::OnInit() {
 	
 }
 
-std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS() {
-	// 設定ファイル読み込み
-	pSetting = std::make_unique<Setting>();
-	if( !pSetting->Load("AutoSS.ini") ) {
-		wxMessageBox(
-			"設定ファイルの読み込みに失敗しました",
-			"AutoSS",
-			wxOK | wxICON_ERROR);
-		return nullptr;
-	}
-	
+int AutoSSApp::OnExit() {
+	pConf->Save("AutoSS.ini");
+	return wxApp::OnExit();
+}
+
+std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS(const std::shared_ptr<Config> &pConf) {
 	// Captureクラス
 	std::shared_ptr<CaptureBase> pCap;
-	if( pSetting->GetCaptureMethod() == "bitblt" ) {
+	if( pConf->CaptureMethod == CAPTURE_BITBLT ) {
 		// BitBlt
 		HINSTANCE hInstance = GetModuleHandle(nullptr);
 		auto pCapBitblt = std::make_shared<BitBltCapture>();
 		pCapBitblt->Setup(hInstance, nullptr);
 		pCap = pCapBitblt;
 		
-	} else if( pSetting->GetCaptureMethod() == "desktop_dupl_api" ) {
+	} else if( pConf->CaptureMethod == CAPTURE_DESKTOP_DUPL_API ) {
 		// Desktop Duplication API
 		auto pCapDD = std::make_shared<DesktopDuplCapture>();
 		pCapDD->Setup();
@@ -91,7 +104,7 @@ std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS() {
 		
 	} else {
 		wxMessageBox(
-			"不正なキャプチャ方式です: " + pSetting->GetCaptureMethod(),
+			"不正なキャプチャ方式です: " + pConf->CaptureMethod,
 			"AutoSS",
 			wxOK | wxICON_ERROR);
 		return nullptr;
@@ -99,13 +112,13 @@ std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS() {
 	
 	// 画像書き出しクラス
 	std::shared_ptr<ImageWriterBase> pImageWriter;
-	if( pSetting->GetSaveFormat() == "ppm" ) {
+	if( pConf->ImageFormat == IMGFMT_PPM ) {
 		pImageWriter = std::make_shared<ImageWriterPPM>();
-	} else if( pSetting->GetSaveFormat() == "bmp" ) {
+	} else if( pConf->ImageFormat = IMGFMT_BMP ) {
 		pImageWriter = std::make_shared<ImageWriterBMP>();
 	} else {
 		wxMessageBox(
-			"不正な画像形式です: " + pSetting->GetSaveFormat(),
+			"不正な画像形式です: " + pConf->ImageFormat,
 			"AutoSS",
 			wxOK | wxICON_ERROR);
 		return nullptr;
@@ -114,8 +127,8 @@ std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS() {
 	// スクリーンショットクラス
 	auto pSS = std::make_unique<ScreenShot2>(
 		pCap, pImageWriter, "",
-		pSetting->GetWait(),
-		pSetting->GetTrimmingMode());
+		pConf->WaitTime,
+		TRIMMING_CLIENT_RECT);
 	
 	return pSS;
 	
@@ -139,8 +152,8 @@ std::string AutoSSApp::GetDateString() const {
 
 void AutoSSApp::OnStart() {
 	// スクリーンショットのファイル名フォーマット設定
-	std::string nameFormat = pSetting->GetSavePath()
-		+ "ss_" + GetDateString() + "_%04d." + pSetting->GetSaveFormat();
+	std::string nameFormat = pConf->SavePath + "\\"
+		+ "ss_" + GetDateString() + "_%04d." + pConf->GetFormatExt();
 	pSS->SetSavePathFormat(nameFormat);
 	
 	pSS->Start();
@@ -151,8 +164,10 @@ void AutoSSApp::OnStop() {
 	pSS->Stop();
 }
 
-void AutoSSApp::OnChangeConf() {
-	
+void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
+	this->pConf = pConf;
+	pSS.reset();
+	pSS = CreateSS(pConf);
 }
 
 

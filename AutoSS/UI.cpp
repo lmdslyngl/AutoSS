@@ -42,9 +42,13 @@ void AutoSSFrame::OnStart(wxCommandEvent &ev) {
 
 void AutoSSFrame::OnConf(wxCommandEvent &ev) {
 	if( pConfigFrame ) pConfigFrame->Destroy();
-	pConfigFrame = new ConfigFrame(this);
+	pConfigFrame = new ConfigFrame(this, OnGetConf());
 	pConfigFrame->ShowModal();
-	if( OnChangeConfFunc ) OnChangeConfFunc();
+	
+	if( OnChangeConfFunc && pConfigFrame->GetCloseState() ) {
+		OnChangeConfFunc(pConfigFrame->GetConfig());
+	}
+	
 }
 
 
@@ -52,11 +56,10 @@ void AutoSSFrame::OnConf(wxCommandEvent &ev) {
 /*
  * 設定ダイアログ
 */
-ConfigFrame::ConfigFrame(wxFrame *pParent)
+ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitConf)
 	: wxDialog(pParent, wxID_ANY, "AutoSS設定")
 {
 	
-	WaitTime = 10;
 	RegisteringHotkey = false;
 	
 	// ホットキー登録用キーイベントフック
@@ -77,7 +80,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent)
 	pSavePathSizer->Add(pSavePathLabel, wxSizerFlags().CenterVertical());
 	pSavePathSizer->AddSpacer(5);
 	
-	pSavePathText = new wxTextCtrl(this, wxID_ANY);
+	pSavePathText = new wxTextCtrl(this, wxID_ANY, pInitConf->SavePath);
 	pSavePathSizer->Add(pSavePathText, wxSizerFlags(1).CenterVertical());
 	pSavePathSizer->AddSpacer(5);
 	
@@ -104,10 +107,10 @@ ConfigFrame::ConfigFrame(wxFrame *pParent)
 	pWaitTimeSizer->Add(pWaitTimeLabel, wxSizerFlags().CenterVertical());
 	pWaitTimeSizer->AddSpacer(5);
 	
-	wxIntegerValidator<unsigned int> intValid(&WaitTime);
+	wxIntegerValidator<unsigned int> intValid(nullptr);
 	pWaitTimeText = new wxTextCtrl(this, wxID_ANY,
-		wxEmptyString, wxDefaultPosition, wxSize(50, -1),
-		0, intValid);
+		std::to_string(pInitConf->WaitTime),
+		wxDefaultPosition, wxSize(50, -1), 0, intValid);
 	pWaitTimeSizer->Add(pWaitTimeText, wxSizerFlags().CenterVertical());
 	
 	pWaitTimeSizer->AddSpacer(10);
@@ -133,7 +136,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent)
 		0, nullptr, wxCB_READONLY);
 	pCaptureCombo->Append("BitBlt");
 	pCaptureCombo->Append("Desktop Duplication API");
-	pCaptureCombo->Select(0);
+	pCaptureCombo->Select(pInitConf->CaptureMethod);
 	pCaptureSizer->Add(pCaptureCombo, wxSizerFlags().CenterVertical());
 	
 	pCaptureSizer->AddSpacer(10);
@@ -150,6 +153,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent)
 	pBorderSizer->AddSpacer(10);
 	
 	pIncludeBorderCheck = new wxCheckBox(this, wxID_ANY, "ウィンドウの枠を含める");
+	pIncludeBorderCheck->SetValue(pInitConf->IncludeBorder);
 	pBorderSizer->Add(pIncludeBorderCheck);
 	
 	pDialogSizer->Add(pBorderSizer);
@@ -160,6 +164,9 @@ ConfigFrame::ConfigFrame(wxFrame *pParent)
 	// ホットキー
 	//
 	
+	HotkeyMod = pInitConf->HotkeyMod;
+	HotkeyCode = pInitConf->HotkeyCode;
+	
 	wxBoxSizer *pHotkeySizer = new wxBoxSizer(wxHORIZONTAL);
 	pHotkeySizer->AddSpacer(10);
 	
@@ -169,6 +176,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent)
 	
 	pHotkeyText = new wxTextCtrl(this, wxID_ANY, "",
 		wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	pHotkeyText->SetValue(wxAcceleratorEntry(HotkeyMod, HotkeyCode).ToString());
 	pHotkeySizer->Add(pHotkeyText, wxSizerFlags(1).CenterVertical());
 	pHotkeySizer->AddSpacer(5);
 	
@@ -203,15 +211,16 @@ ConfigFrame::ConfigFrame(wxFrame *pParent)
 	
 }
 
-ConfigFrame::CONFIG ConfigFrame::GetConfig() const {
-	CONFIG conf;
-	conf.SavePath = pSavePathText->GetValue();
-	conf.WaitTime = WaitTime;
-	conf.CaptureMethod = pCaptureCombo->GetSelection();
-	conf.IncludeBorder = pIncludeBorderCheck->GetValue();
-	conf.HotkeyCode = HotkeyCode;
-	conf.HotkeyMod = HotkeyMod;
-	return conf;
+std::shared_ptr<Config> ConfigFrame::GetConfig() const {
+	auto pConf = std::make_shared<Config>();
+	pConf->SavePath = pSavePathText->GetValue();
+	pConf->WaitTime = std::stoi(pWaitTimeText->GetValue().ToStdString());
+	pConf->CaptureMethod = (CAPTURE_METHOD)pCaptureCombo->GetSelection();
+	pConf->IncludeBorder = pIncludeBorderCheck->GetValue();
+	pConf->HotkeyCode = HotkeyCode;
+	pConf->HotkeyMod = HotkeyMod;
+	pConf->ImageFormat = IMGFMT_BMP;
+	return pConf;
 }
 
 

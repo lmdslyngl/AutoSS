@@ -4,6 +4,8 @@
 #include <wx/wx.h>
 
 #include <functional>
+#include <memory>
+#include "Config.h"
 
 class ConfigFrame;
 
@@ -21,8 +23,11 @@ public:
 	void SetOnStopFunc(std::function<void()> func) {
 		this->OnStopFunc = func;
 	}
-	void SetOnChangeConfFunc(std::function<void()> func) {
+	void SetOnChangeConfFunc(std::function<void(const std::shared_ptr<Config>&)> func) {
 		this->OnChangeConfFunc = func;
+	}
+	void SetOnGetConf(std::function<std::shared_ptr<Config>()> func) {
+		this->OnGetConf = func;
 	}
 	
 private:
@@ -37,7 +42,8 @@ private:
 	
 	std::function<void()> OnStartFunc;
 	std::function<void()> OnStopFunc;
-	std::function<void()> OnChangeConfFunc;
+	std::function<void(const std::shared_ptr<Config>&)> OnChangeConfFunc;
+	std::function<std::shared_ptr<Config>()> OnGetConf;
 	
 };
 
@@ -48,18 +54,7 @@ private:
 class ConfigFrame : public wxDialog {
 public:
 	
-	struct CONFIG {
-		std::string SavePath;
-		unsigned int WaitTime;
-		int CaptureMethod;
-		bool IncludeBorder;
-		int HotkeyMod;
-		int HotkeyCode;
-	};
-	
-public:
-	
-	ConfigFrame(wxFrame *pParent);
+	ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitConf);
 	
 	// 設定ダイアログが閉じられた状態を取得
 	// true: OK
@@ -68,7 +63,7 @@ public:
 		return CloseState;
 	}
 	
-	CONFIG GetConfig() const;
+	std::shared_ptr<Config> GetConfig() const;
 	
 private:
 	void OnSavePathRef(wxCommandEvent &ev);
@@ -82,7 +77,6 @@ private:
 	wxTextCtrl *pSavePathText;
 	wxButton *pSavePathRefButton;
 	wxTextCtrl *pWaitTimeText;
-	unsigned int WaitTime;
 	wxComboBox *pCaptureCombo;
 	wxCheckBox *pIncludeBorderCheck;
 	wxButton *pHotkeyRegButton;
