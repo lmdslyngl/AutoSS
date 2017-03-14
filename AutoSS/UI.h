@@ -15,7 +15,7 @@ class ConfigFrame;
 class AutoSSFrame : public wxFrame {
 public:
 	
-	AutoSSFrame();
+	AutoSSFrame(const std::shared_ptr<Config> &pConf);
 	
 	void SetOnStartFunc(std::function<void()> func) {
 		this->OnStartFunc = func;
@@ -26,13 +26,13 @@ public:
 	void SetOnChangeConfFunc(std::function<void(const std::shared_ptr<Config>&)> func) {
 		this->OnChangeConfFunc = func;
 	}
-	void SetOnGetConf(std::function<std::shared_ptr<Config>()> func) {
-		this->OnGetConf = func;
-	}
 	
 private:
-	void OnStart(wxCommandEvent &ev);
 	void OnConf(wxCommandEvent &ev);
+	
+	void OnHotkey(wxKeyEvent &ev);
+	void OnStart(wxCommandEvent &ev);
+	void OnStartImpl();
 	
 private:
 	ConfigFrame *pConfigFrame;
@@ -43,7 +43,12 @@ private:
 	std::function<void()> OnStartFunc;
 	std::function<void()> OnStopFunc;
 	std::function<void(const std::shared_ptr<Config>&)> OnChangeConfFunc;
-	std::function<std::shared_ptr<Config>()> OnGetConf;
+	
+	std::shared_ptr<Config> pConf;
+	
+	enum {
+		HOTKEY_ID_START
+	};
 	
 };
 
@@ -82,7 +87,7 @@ private:
 	wxButton *pHotkeyRegButton;
 	wxTextCtrl *pHotkeyText;
 	bool RegisteringHotkey;
-	int HotkeyCode, HotkeyMod;
+	int HotkeyCode, HotkeyCodeRaw, HotkeyMod;
 	wxButton *pOKButton, *pCancelButton;
 	bool CloseState;
 };

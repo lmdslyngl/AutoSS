@@ -41,6 +41,7 @@ private:
 private:
 	std::shared_ptr<Config> pConf;
 	std::unique_ptr<ScreenShot2> pSS;
+	AutoSSFrame *pFrame;
 };
 
 
@@ -62,10 +63,12 @@ bool AutoSSApp::OnInit() {
 		return nullptr;
 	}
 	
+	// スクリーンショット撮影クラス作成
 	pSS = CreateSS(pConf);
 	if( !pSS ) return false;
 	
-	AutoSSFrame *pFrame = new AutoSSFrame();
+	// メインウィンドウ
+	pFrame = new AutoSSFrame(pConf);
 	pFrame->SetOnStartFunc([this]() { this->OnStart(); });
 	pFrame->SetOnStopFunc([this]() { this->OnStop(); });
 	pFrame->SetOnChangeConfFunc(
@@ -73,7 +76,6 @@ bool AutoSSApp::OnInit() {
 			this->OnChangeConf(pConf);
 		}
 	);
-	pFrame->SetOnGetConf([this]() { return pConf; });
 	
 	pFrame->Show();
 	

@@ -45,6 +45,7 @@ public:
 	bool IncludeBorder;
 	int HotkeyMod;
 	int HotkeyCode;
+	int HotkeyCodeRaw;
 	IMAGE_FORMAT ImageFormat;
 	
 private:

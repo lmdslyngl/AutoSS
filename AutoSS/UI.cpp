@@ -5,9 +5,11 @@
 /*
  * AutoSSウィンドウ
 */
-AutoSSFrame::AutoSSFrame() : wxFrame(nullptr, wxID_ANY, "AutoSS")
+AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
+	: wxFrame(nullptr, wxID_ANY, "AutoSS")
 {
 	
+	this->pConf = pConf;
 	pConfigFrame = nullptr;
 	TakingSS = false;
 	
@@ -27,9 +29,39 @@ AutoSSFrame::AutoSSFrame() : wxFrame(nullptr, wxID_ANY, "AutoSS")
 	CreateStatusBar(1);
 	SetStatusText("Stopped");
 	
+	// ホットキー
+	Bind(wxEVT_HOTKEY, &AutoSSFrame::OnHotkey, this);
+	RegisterHotKey(HOTKEY_ID_START, pConf->HotkeyMod, pConf->HotkeyCodeRaw);
+	
 }
 
 void AutoSSFrame::OnStart(wxCommandEvent &ev) {
+	OnStartImpl();
+}
+
+void AutoSSFrame::OnConf(wxCommandEvent &ev) {
+	if( pConfigFrame ) pConfigFrame->Destroy();
+	pConfigFrame = new ConfigFrame(this, pConf);
+	pConfigFrame->ShowModal();
+	
+	if( OnChangeConfFunc && pConfigFrame->GetCloseState() ) {
+		auto pNewConfig = pConfigFrame->GetConfig();
+		OnChangeConfFunc(pNewConfig);
+		
+		// ホットキー変更
+		UnregisterHotKey(HOTKEY_ID_START);
+		RegisterHotKey(HOTKEY_ID_START,
+			pNewConfig->HotkeyMod, pNewConfig->HotkeyCodeRaw);
+		
+	}
+	
+}
+
+void AutoSSFrame::OnHotkey(wxKeyEvent &ev) {
+	OnStartImpl();
+}
+
+void AutoSSFrame::OnStartImpl() {
 	TakingSS = !TakingSS;
 	if( TakingSS ) {
 		if( OnStartFunc ) OnStartFunc();
@@ -39,18 +71,6 @@ void AutoSSFrame::OnStart(wxCommandEvent &ev) {
 		pStartBtn->SetLabel("Start");
 	}
 }
-
-void AutoSSFrame::OnConf(wxCommandEvent &ev) {
-	if( pConfigFrame ) pConfigFrame->Destroy();
-	pConfigFrame = new ConfigFrame(this, OnGetConf());
-	pConfigFrame->ShowModal();
-	
-	if( OnChangeConfFunc && pConfigFrame->GetCloseState() ) {
-		OnChangeConfFunc(pConfigFrame->GetConfig());
-	}
-	
-}
-
 
 
 /*
@@ -218,6 +238,7 @@ std::shared_ptr<Config> ConfigFrame::GetConfig() const {
 	pConf->CaptureMethod = (CAPTURE_METHOD)pCaptureCombo->GetSelection();
 	pConf->IncludeBorder = pIncludeBorderCheck->GetValue();
 	pConf->HotkeyCode = HotkeyCode;
+	pConf->HotkeyCodeRaw = HotkeyCodeRaw;
 	pConf->HotkeyMod = HotkeyMod;
 	pConf->ImageFormat = IMGFMT_BMP;
 	return pConf;
@@ -280,6 +301,7 @@ void ConfigFrame::OnKeyDown(wxKeyEvent &ev) {
 			// 装飾キーのみの場合は無視
 		} else {
 			HotkeyCode = ev.GetKeyCode();
+			HotkeyCodeRaw = ev.GetRawKeyCode();
 			HotkeyMod = ev.GetModifiers();
 			pHotkeyText->SetValue(wxAcceleratorEntry(HotkeyMod, HotkeyCode).ToString());
 		}

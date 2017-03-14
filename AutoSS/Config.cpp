@@ -15,6 +15,7 @@ void Config::Load(const std::string &conffile) {
 	IncludeBorder = std::stoi(mapKeyValues["IncludeBorder"]) ? true : false;
 	HotkeyMod = std::stoi(mapKeyValues["HotkeyMod"]);
 	HotkeyCode = std::stoi(mapKeyValues["HotkeyCode"]);
+	HotkeyCodeRaw = std::stoi(mapKeyValues["HotkeyCodeRaw"]);
 	ImageFormat = (IMAGE_FORMAT)std::stoi(mapKeyValues["ImageFormat"]);
 	
 }
@@ -31,6 +32,7 @@ void Config::Save(const std::string &conffile) {
 	ofs << "IncludeBorder=" << (IncludeBorder ? 1 : 0) << "\n";
 	ofs << "HotkeyMod=" << std::to_string(HotkeyMod) << "\n";
 	ofs << "HotkeyCode=" << std::to_string(HotkeyCode) << "\n";
+	ofs << "HotkeyCodeRaw=" << std::to_string(HotkeyCodeRaw) << "\n";
 	ofs << "ImageFormat=" << std::to_string(ImageFormat) << "\n";
 	
 	ofs.close();
