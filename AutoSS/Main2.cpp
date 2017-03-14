@@ -124,11 +124,18 @@ std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS(const std::shared_ptr<Config> &
 		return nullptr;
 	}
 	
+	// ウィンドウのトリミング方法
+	TRIMMING_MODE trimmode;
+	if( pConf->IncludeBorder ) {
+		trimmode = TRIMMING_WINDOW_RECT_DWM;
+	} else {
+		trimmode = TRIMMING_CLIENT_RECT;;
+	}
+	
 	// スクリーンショットクラス
 	auto pSS = std::make_unique<ScreenShot2>(
 		pCap, pImageWriter, "",
-		pConf->WaitTime,
-		TRIMMING_CLIENT_RECT);
+		pConf->WaitTime, trimmode);
 	
 	return pSS;
 	
