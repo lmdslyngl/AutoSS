@@ -191,7 +191,7 @@ void AutoSSApp::OnStop() {
 }
 
 void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
-	this->pConf = pConf;
+	*this->pConf = *pConf;
 	pSS.reset();
 	pSS = CreateSS(pConf);
 }

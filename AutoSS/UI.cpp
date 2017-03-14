@@ -187,6 +187,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	
 	HotkeyMod = pInitConf->HotkeyMod;
 	HotkeyCode = pInitConf->HotkeyCode;
+	HotkeyCodeRaw = pInitConf->HotkeyCodeRaw;
 	
 	wxBoxSizer *pHotkeySizer = new wxBoxSizer(wxHORIZONTAL);
 	pHotkeySizer->AddSpacer(10);
