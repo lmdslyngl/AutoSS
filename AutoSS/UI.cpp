@@ -66,6 +66,7 @@ void AutoSSFrame::OnStartImpl() {
 	if( TakingSS ) {
 		if( OnStartFunc ) OnStartFunc();
 		pStartBtn->SetLabel("Stop");
+		SetStatusText("Taking");
 	} else {
 		if( OnStopFunc ) OnStopFunc();
 		pStartBtn->SetLabel("Start");

@@ -88,6 +88,11 @@ public:
 		return TrimMode;
 	}
 	
+	// 撮影枚数を取得
+	int GetTakenCount() const {
+		return SSCtr;
+	}
+	
 protected:
 	
 	// ウィンドウの大きさを取得

@@ -5,6 +5,9 @@
 #include <memory>
 #include <functional>
 #include <time.h>
+#include <sstream>
+#include <iomanip>
+#include <chrono>
 
 #include "UI.h"
 #include "BitBltCapture.h"
@@ -42,6 +45,7 @@ private:
 	std::shared_ptr<Config> pConf;
 	std::unique_ptr<ScreenShot2> pSS;
 	AutoSSFrame *pFrame;
+	std::chrono::time_point<std::chrono::system_clock> StartTime;
 };
 
 
@@ -161,9 +165,12 @@ std::string AutoSSApp::GetDateString() const {
 
 void AutoSSApp::OnStart() {
 	// スクリーンショットのファイル名フォーマット設定
-	std::string nameFormat = pConf->SavePath + "\\"
-		+ "ss_" + GetDateString() + "_%04d." + pConf->GetFormatExt();
-	pSS->SetSavePathFormat(nameFormat);
+	std::stringstream nameFormat;
+	nameFormat << pConf->SavePath << "\\"
+		<< "ss_" << GetDateString() << "_%04d." << pConf->GetFormatExt();
+	pSS->SetSavePathFormat(nameFormat.str());
+	
+	StartTime = std::chrono::system_clock::now();
 	
 	pSS->Start();
 	
@@ -171,6 +178,16 @@ void AutoSSApp::OnStart() {
 
 void AutoSSApp::OnStop() {
 	pSS->Stop();
+	
+	auto endTime = std::chrono::system_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - StartTime);
+	double fps = (double)pSS->GetTakenCount() / (duration.count() / 1000.0);
+	
+	std::stringstream statusText;
+	statusText << "Stopped: " << pSS->GetTakenCount() << " images taken "
+		<< "(fps: " << std::fixed << std::setprecision(2) << fps << ")";
+	pFrame->SetStatusText(statusText.str());
+	
 }
 
 void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
