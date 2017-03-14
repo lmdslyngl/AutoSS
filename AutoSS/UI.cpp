@@ -58,7 +58,7 @@ void AutoSSFrame::OnConf(wxCommandEvent &ev) {
 }
 
 void AutoSSFrame::OnHotkey(wxKeyEvent &ev) {
-	if( !pConfigFrame->IsShown() ) {
+	if( !pConfigFrame || (pConfigFrame && !pConfigFrame->IsShown()) ) {
 		// 設定ダイアログが出ているときはホットキーを無視する
 		OnStartImpl();
 	}
