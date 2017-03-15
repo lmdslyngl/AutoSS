@@ -42,7 +42,10 @@ void AutoSSFrame::OnStart(wxCommandEvent &ev) {
 void AutoSSFrame::OnConf(wxCommandEvent &ev) {
 	if( pConfigFrame ) pConfigFrame->Destroy();
 	pConfigFrame = new ConfigFrame(this, pConf);
+	
+	DisableCapture();
 	pConfigFrame->ShowModal();
+	EnableCapture();
 	
 	if( OnChangeConfFunc && pConfigFrame->GetCloseState() ) {
 		auto pNewConfig = pConfigFrame->GetConfig();
@@ -58,7 +61,7 @@ void AutoSSFrame::OnConf(wxCommandEvent &ev) {
 }
 
 void AutoSSFrame::OnHotkey(wxKeyEvent &ev) {
-	if( !pConfigFrame || (pConfigFrame && !pConfigFrame->IsShown()) ) {
+	if( IsEnableCapture ) {
 		// 設定ダイアログが出ているときはホットキーを無視する
 		OnStartImpl();
 	}
