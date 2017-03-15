@@ -35,19 +35,34 @@ void DesktopDuplCapture::Setup() {
 	}
 	
 	IDXGIDevice *pDxgiDevice = nullptr;
-	pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDxgiDevice);
+	hr = pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDxgiDevice);
+	if( FAILED(hr) ) {
+		throw std::exception("Failed to QueryInterface IDXGIDevice");
+	}
 	
 	IDXGIAdapter *pDxgiAdapter = nullptr;
-	pDxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&pDxgiAdapter);
+	hr = pDxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&pDxgiAdapter);
+	if( FAILED(hr) ) {
+		throw std::exception("Failed to QueryInterface IDXGIAdapter");
+	}
 	
 	IDXGIOutput *pDxgiOutput = nullptr;
-	pDxgiAdapter->EnumOutputs(0, &pDxgiOutput);
+	hr = pDxgiAdapter->EnumOutputs(0, &pDxgiOutput);
+	if( FAILED(hr) ) {
+		throw std::exception("Failed to IDXGIAdapter->EnumOutputs");
+	}
 	
 	IDXGIOutput1 *pDxgiOutput1 = nullptr;
-	pDxgiOutput->QueryInterface(__uuidof(IDXGIOutput1), (void**)&pDxgiOutput1);
+	hr = pDxgiOutput->QueryInterface(__uuidof(IDXGIOutput1), (void**)&pDxgiOutput1);
+	if( FAILED(hr) ) {
+		throw std::exception("Failed to QueryInterface IDXGIOutput1");
+	}
 	
 	pDupl = nullptr;
-	pDxgiOutput1->DuplicateOutput(pDevice, &pDupl);
+	hr = pDxgiOutput1->DuplicateOutput(pDevice, &pDupl);
+	if( FAILED(hr) ) {
+		throw std::exception("Failed to IDXGIOutput1->DuplicateOutput");
+	}
 	pDupl->GetDesc(&duplDesc);
 	
 	// ステージングテクスチャ作成
