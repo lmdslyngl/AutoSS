@@ -48,6 +48,8 @@
       </SubType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Main2.cpp">
       <SubType>
@@ -104,6 +106,8 @@
       </SubType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="ScreenShot2.h">
       <SubType>
@@ -176,6 +180,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Tool\lib\wxWidgets-3.1.0\lib\vc_x64_dll;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.0\lib\vc_dll;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.0\lib\vc_dll;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
