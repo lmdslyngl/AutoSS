@@ -27,6 +27,16 @@ public:
 		this->OnChangeConfFunc = func;
 	}
 	
+	void EnableCapture() {
+		IsEnableCapture = true;
+		pStartBtn->Enable();
+	}
+	
+	void DisableCapture() {
+		IsEnableCapture = false;
+		pStartBtn->Disable();
+	}
+	
 private:
 	void OnConf(wxCommandEvent &ev);
 	
@@ -39,6 +49,7 @@ private:
 	bool TakingSS;
 	
 	wxButton *pStartBtn;
+	bool IsEnableCapture;
 	
 	std::function<void()> OnStartFunc;
 	std::function<void()> OnStopFunc;

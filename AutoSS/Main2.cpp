@@ -69,7 +69,6 @@ bool AutoSSApp::OnInit() {
 	
 	// スクリーンショット撮影クラス作成
 	pSS = CreateSS(pConf);
-	if( !pSS ) return false;
 	
 	// メインウィンドウ
 	pFrame = new AutoSSFrame(pConf);
@@ -80,6 +79,9 @@ bool AutoSSApp::OnInit() {
 			this->OnChangeConf(pConf);
 		}
 	);
+	
+	// スクリーンショットの初期化に失敗した場合は，開始ボタンを無効にする
+	if( !pSS ) pFrame->DisableCapture();
 	
 	pFrame->Show();
 	
@@ -97,16 +99,34 @@ std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS(const std::shared_ptr<Config> &
 	std::shared_ptr<CaptureBase> pCap;
 	if( pConf->CaptureMethod == CAPTURE_BITBLT ) {
 		// BitBlt
-		HINSTANCE hInstance = GetModuleHandle(nullptr);
-		auto pCapBitblt = std::make_shared<BitBltCapture>();
-		pCapBitblt->Setup(hInstance, nullptr);
-		pCap = pCapBitblt;
+		try {
+			HINSTANCE hInstance = GetModuleHandle(nullptr);
+			auto pCapBitblt = std::make_shared<BitBltCapture>();
+			pCapBitblt->Setup(hInstance, nullptr);
+			pCap = pCapBitblt;
+		} catch( std::exception & ) {
+			wxMessageBox(
+				"BitBltCaptureの初期化に失敗しました",
+				"AutoSS",
+				wxOK | wxICON_ERROR);
+			return nullptr;
+		}
 		
 	} else if( pConf->CaptureMethod == CAPTURE_DESKTOP_DUPL_API ) {
 		// Desktop Duplication API
-		auto pCapDD = std::make_shared<DesktopDuplCapture>();
-		pCapDD->Setup();
-		pCap = pCapDD;
+		try {
+			auto pCapDD = std::make_shared<DesktopDuplCapture>();
+			pCapDD->Setup();
+			pCap = pCapDD;
+		} catch( std::exception & ) {
+			wxMessageBox(
+				wxString(
+					"DesktopDuplCaptureの初期化に失敗しました\n"
+					"設定からキャプチャ方式をBitBltに変更してみてください\n"),
+				"AutoSS",
+				wxOK | wxICON_ERROR);
+			return nullptr;
+		}
 		
 	} else {
 		wxMessageBox(
@@ -194,6 +214,11 @@ void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
 	*this->pConf = *pConf;
 	pSS.reset();
 	pSS = CreateSS(pConf);
+	if( pSS ) {
+		pFrame->EnableCapture();
+	} else {
+		pFrame->DisableCapture();
+	}
 }
 
 
