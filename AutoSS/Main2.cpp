@@ -153,7 +153,7 @@ std::unique_ptr<ScreenShot2> AutoSSApp::CreateSS(const std::shared_ptr<Config> &
 	// ウィンドウのトリミング方法
 	TRIMMING_MODE trimmode;
 	if( pConf->IncludeBorder ) {
-		trimmode = TRIMMING_WINDOW_RECT_DWM;
+		trimmode = TRIMMING_WINDOW_RECT;
 	} else {
 		trimmode = TRIMMING_CLIENT_RECT;;
 	}
