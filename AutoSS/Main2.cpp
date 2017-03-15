@@ -1,6 +1,7 @@
 ﻿
 #define WXUSINGDLL
 #include <wx/wx.h>
+#include <wx/stdpaths.h>
 
 #include <memory>
 #include <functional>
@@ -185,8 +186,14 @@ std::string AutoSSApp::GetDateString() const {
 
 void AutoSSApp::OnStart() {
 	// スクリーンショットのファイル名フォーマット設定
+	std::string savepath = pConf->SavePath;
+	if( pConf->SavePath.empty() ) {
+		// 保存ディレクトリが空の場合は，ピクチャフォルダに保存
+		savepath = wxStandardPaths::Get().GetUserDir(wxStandardPaths::Dir_Pictures);
+	}
+	
 	std::stringstream nameFormat;
-	nameFormat << pConf->SavePath << "\\"
+	nameFormat << savepath << "\\"
 		<< "ss_" << GetDateString() << "_%04d." << pConf->GetFormatExt();
 	pSS->SetSavePathFormat(nameFormat.str());
 	
