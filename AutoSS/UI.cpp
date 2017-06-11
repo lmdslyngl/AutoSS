@@ -1,6 +1,7 @@
 ﻿
 #include "UI.h"
 #include <wx/valnum.h>
+#include <wx/appprogress.h>
 
 /*
  * AutoSSウィンドウ
@@ -32,6 +33,16 @@ AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
 	// ホットキー
 	Bind(wxEVT_HOTKEY, &AutoSSFrame::OnHotkey, this);
 	RegisterHotKey(HOTKEY_ID_START, pConf->HotkeyMod, pConf->HotkeyCodeRaw);
+	
+	// タスクバーインジケータ
+	pProgressIndicator = new wxAppProgressIndicator(this);
+	if( pProgressIndicator->IsAvailable() ) {
+		pProgressIndicator->SetRange(1);
+	} else {
+		// 使えなかったときはnullptrにしておく
+		delete pProgressIndicator;
+		pProgressIndicator = nullptr;
+	}
 	
 }
 
@@ -73,9 +84,11 @@ void AutoSSFrame::OnStartImpl() {
 		if( OnStartFunc ) OnStartFunc();
 		pStartBtn->SetLabel("Stop");
 		SetStatusText("Taking");
+		if( pProgressIndicator ) pProgressIndicator->SetValue(1);
 	} else {
 		if( OnStopFunc ) OnStopFunc();
 		pStartBtn->SetLabel("Start");
+		if( pProgressIndicator ) pProgressIndicator->SetValue(0);
 	}
 }
 

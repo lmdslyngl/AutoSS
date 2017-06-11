@@ -48,6 +48,7 @@ private:
 	ConfigFrame *pConfigFrame;
 	bool TakingSS;
 	
+	wxAppProgressIndicator *pProgressIndicator;
 	wxButton *pStartBtn;
 	bool IsEnableCapture;
 	
