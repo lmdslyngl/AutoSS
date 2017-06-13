@@ -13,6 +13,7 @@ AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
 	this->pConf = pConf;
 	pConfigFrame = nullptr;
 	TakingSS = false;
+	IsEnableCapture = true;
 	
 	wxSizer *pSizer = new wxBoxSizer(wxHORIZONTAL);
 	
