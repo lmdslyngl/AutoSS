@@ -111,16 +111,15 @@ void DesktopDuplCapture::CaptureRegion(const RECT *region) {
 	const unsigned char *src = (const unsigned char*)mappedRes.pData;
 	unsigned char *dst = vecRegionImg.data();
 	
-	// BGRX -> RGB
+	// BGRX -> BGR
 	for( int y = 0; y < RegionHeight; y++ ) {
 		const unsigned char *srcrow =
 			&src[((region->top + y) * duplDesc.ModeDesc.Width + region->left) * 4];
 		for( int x = 0; x < RegionWidth; x++ ) {
-			dst[0] = srcrow[2];
-			dst[1] = srcrow[1];
-			dst[2] = srcrow[0];
-			dst += 3;
-			srcrow += 4;
+			*dst++ = *srcrow++;
+			*dst++ = *srcrow++;
+			*dst++ = *srcrow++;
+			srcrow++;
 		}
 	}
 	

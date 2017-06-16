@@ -1,6 +1,7 @@
 ﻿
 #include "ImageWriterPPM.h"
 #include <fstream>
+#include <vector>
 
 // 画像を保存
 void ImageWriterPPM::Write(
@@ -19,7 +20,23 @@ void ImageWriterPPM::Write(
 	ofs.write(header, strlen(header));
 	
 	// 画像データ
-	ofs.write((const char*)data, length);
+	std::vector<unsigned char> vecRowBuffer(width * 3);
+	std::fill(std::begin(vecRowBuffer), std::end(vecRowBuffer), 0);
+	unsigned char *rowdst = nullptr;
+	const unsigned char *src = data;
+	
+	// BGRをRGBに変換しながら書き出し
+	for( int r = 0; r < height; r++ ) {
+		rowdst = vecRowBuffer.data();
+		for( int c = 0; c < width; c++ ) {
+			rowdst[0] = src[2];
+			rowdst[1] = src[1];
+			rowdst[2] = src[0];
+			rowdst += 3;
+			src += 3;
+		}
+		ofs.write((const char*)vecRowBuffer.data(), vecRowBuffer.size());
+	}
 	
 	ofs.close();
 	

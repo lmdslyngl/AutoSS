@@ -39,7 +39,7 @@ protected:
 	LPDWORD pSSBitmapPixels;
 	int SSBitmapWidth, SSBitmapHeight;
 	HDC hSSBitmapMemDC;
-	std::vector<unsigned char> CapturedImageRGB;
+	std::vector<unsigned char> CapturedImageBGR;
 	int CapturedWidth, CapturedHeight;
 };
 

@@ -76,20 +76,19 @@ void BitBltCapture::CaptureRegion(const RECT *region) {
 	CapturedWidth = region->right - region->left;
 	CapturedHeight = region->bottom - region->top;
 	
-	CapturedImageRGB.resize(CapturedWidth * CapturedHeight * 3);
+	CapturedImageBGR.resize(CapturedWidth * CapturedHeight * 3);
 	const unsigned char *src = (unsigned char*)pSSBitmapPixels;
-	unsigned char *dst = CapturedImageRGB.data();
+	unsigned char *dst = CapturedImageBGR.data();
 	
-	// BGRX -> RGB
+	// BGRX -> BGR
 	for( int y = 0; y < CapturedHeight; y++ ) {
 		const unsigned char *srcrow =
 			&src[((region->top + y) * SSBitmapWidth + region->left) * 4];
 		for( int x = 0; x < CapturedWidth; x++ ) {
-			dst[0] = srcrow[2];
-			dst[1] = srcrow[1];
-			dst[2] = srcrow[0];
-			dst += 3;
-			srcrow += 4;
+			*dst++ = *srcrow++;
+			*dst++ = *srcrow++;
+			*dst++ = *srcrow++;
+			srcrow++;
 		}
 	}
 	
@@ -97,12 +96,12 @@ void BitBltCapture::CaptureRegion(const RECT *region) {
 
 // 画像データを取得
 const unsigned char *BitBltCapture::GetData() const {
-	return CapturedImageRGB.data();
+	return CapturedImageBGR.data();
 }
 
 // 画像データの長さを取得
 size_t BitBltCapture::BitBltCapture::GetDataLength() const {
-	return CapturedImageRGB.size();
+	return CapturedImageBGR.size();
 }
 
 // 画像のサイズを取得

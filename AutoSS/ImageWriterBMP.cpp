@@ -37,24 +37,13 @@ void ImageWriterBMP::Write(
 	ofs.write((const char*)&info, sizeof(BITMAPINFOHEADER));
 	
 	int pitch = 3 * width;
-	int paddedPitch = pitch + ((4 - (pitch % 4)) % 4);	// パディングを含んだピッチ
-	std::vector<unsigned char> vecRowBuffer(paddedPitch);
-	std::fill(std::begin(vecRowBuffer), std::end(vecRowBuffer), 0);
-	const unsigned char *cursor = data;
-	unsigned char *rowcursor = nullptr;
+	int numPadding = (4 - (pitch % 4)) % 4;
+	unsigned char zeros[4] = { 0, 0, 0, 0 };
 	
 	for( int r = height - 1; 0 <= r; r-- ) {
-		// 上下反転，RGB -> BGRに並べ替えながらコピー
-		rowcursor = vecRowBuffer.data();
-		cursor = data + pitch * r;
-		for( int c = 0; c < width; c++ ) {
-			rowcursor[2] = cursor[0];
-			rowcursor[1] = cursor[1];
-			rowcursor[0] = cursor[2];
-			rowcursor += 3;
-			cursor += 3;
-		}
-		ofs.write((const char*)vecRowBuffer.data(), vecRowBuffer.size());
+		// 上下反転しながら書き出し
+		ofs.write((const char*)data + pitch * r, pitch);
+		ofs.write((const char*)zeros, numPadding);
 	}
 	
 	ofs.close();
