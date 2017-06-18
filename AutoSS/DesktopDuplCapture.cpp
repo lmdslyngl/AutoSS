@@ -98,6 +98,9 @@ void DesktopDuplCapture::CaptureRegion(const RECT *region) {
 	DXGI_OUTDUPL_FRAME_INFO frameInfo;
 	pDupl->AcquireNextFrame(500, &frameInfo, &pDeskRes);
 	
+	// タイムアウトしたときは何もせず直前の画像を維持する
+	if( pDeskRes == nullptr ) return;
+	
 	ID3D11Texture2D *pDeskTex = nullptr;
 	pDeskRes->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pDeskTex);
 	
