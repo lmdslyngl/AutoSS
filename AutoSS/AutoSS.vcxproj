@@ -97,6 +97,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ScreenShot2.h">
       <SubType>
       </SubType>
@@ -110,6 +111,9 @@
       <SubType>
       </SubType>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AutoSS.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92CE6C90-ACF1-4CE1-884D-1071523323BE}</ProjectGuid>
