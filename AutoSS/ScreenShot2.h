@@ -115,5 +115,6 @@ protected:
 	std::unique_ptr<TimerExec> pTimer;
 	std::string SavePathFormat;
 	int SSCtr;
+	std::vector<unsigned char> vecImgBuffer;
 };
 

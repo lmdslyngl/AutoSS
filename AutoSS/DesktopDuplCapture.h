@@ -18,16 +18,10 @@ public:
 	void Setup();
 	
 	// 領域のキャプチャを行う
-	virtual void CaptureRegion(const RECT *region);
-	
-	// 画像データを取得
-	virtual const unsigned char *GetData() const;
-	
-	// 画像データの長さを取得
-	virtual size_t GetDataLength() const;
-	
-	// 画像のサイズを取得
-	virtual void GetImageSize(int *pOutWidth, int *pOutHeight);
+	virtual void CaptureRegion(
+		const RECT *region,
+		unsigned char *pOutBuffer, unsigned int bufferLength,
+		int *pOutCapturedWidth, int *pOutCapturedHeight);
 	
 protected:
 	ID3D11Device *pDevice;
@@ -35,7 +29,5 @@ protected:
 	IDXGIOutputDuplication *pDupl;
 	ID3D11Texture2D *pTexStaging;
 	DXGI_OUTDUPL_DESC duplDesc;
-	std::vector<unsigned char> vecRegionImg;
-	int RegionWidth, RegionHeight;
 };
 

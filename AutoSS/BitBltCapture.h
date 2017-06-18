@@ -19,16 +19,10 @@ public:
 	void Setup(HINSTANCE hInstance, std::shared_ptr<DummyWindow> pWindow);
 	
 	// 領域のキャプチャを行う
-	virtual void CaptureRegion(const RECT *region);
-	
-	// 画像データを取得
-	virtual const unsigned char *GetData() const;
-	
-	// 画像データの長さを取得
-	virtual size_t GetDataLength() const;
-	
-	// 画像のサイズを取得
-	virtual void GetImageSize(int *pOutWidth, int *pOutHeight);
+	virtual void CaptureRegion(
+		const RECT *region,
+		unsigned char *pOutBuffer, unsigned int bufferLength,
+		int *pOutCapturedWidth, int *pOutCapturedHeight);
 	
 protected:
 	HINSTANCE hInstance;
@@ -39,7 +33,5 @@ protected:
 	LPDWORD pSSBitmapPixels;
 	int SSBitmapWidth, SSBitmapHeight;
 	HDC hSSBitmapMemDC;
-	std::vector<unsigned char> CapturedImageBGR;
-	int CapturedWidth, CapturedHeight;
 };
 

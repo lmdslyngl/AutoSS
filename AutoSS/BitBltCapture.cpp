@@ -1,5 +1,6 @@
 ﻿
 #include "BitBltCapture.h"
+#include <assert.h>
 
 /*
  * BitBltを用いたキャプチャ
@@ -14,8 +15,6 @@ BitBltCapture::BitBltCapture() {
 	SSBitmapWidth = 0;
 	SSBitmapHeight = 0;
 	hSSBitmapMemDC = nullptr;
-	CapturedWidth = 0;
-	CapturedHeight = 0;
 }
 
 BitBltCapture::~BitBltCapture() {
@@ -69,22 +68,32 @@ void BitBltCapture::Setup(HINSTANCE hInstance, std::shared_ptr<DummyWindow> pWin
 }
 
 // 領域のキャプチャを行う
-void BitBltCapture::CaptureRegion(const RECT *region) {
+void BitBltCapture::CaptureRegion(
+	const RECT *region,
+	unsigned char *pOutBuffer, unsigned int bufferLength,
+	int *pOutCapturedWidth, int *pOutCapturedHeight)
+{
+
+	assert(region != nullptr);
+	assert(pOutBuffer != nullptr);
+	assert(pOutCapturedWidth != nullptr && pOutCapturedHeight != nullptr);
+	
+	int capturedWidth = region->right - region->left;
+	int capturedHeight = region->bottom - region->top;
+	unsigned int necessaryBufLen = capturedWidth * capturedHeight * 3;
+	assert(necessaryBufLen <= bufferLength);
+	
 	BitBlt(hSSBitmapMemDC, 0, 0, SSBitmapWidth, SSBitmapHeight,
 		hDesktopDC, 0, 0, SRCCOPY);
 	
-	CapturedWidth = region->right - region->left;
-	CapturedHeight = region->bottom - region->top;
-	
-	CapturedImageBGR.resize(CapturedWidth * CapturedHeight * 3);
 	const unsigned char *src = (unsigned char*)pSSBitmapPixels;
-	unsigned char *dst = CapturedImageBGR.data();
+	unsigned char *dst = pOutBuffer;
 	
 	// BGRX -> BGR
-	for( int y = 0; y < CapturedHeight; y++ ) {
+	for( int y = 0; y < capturedHeight; y++ ) {
 		const unsigned char *srcrow =
 			&src[((region->top + y) * SSBitmapWidth + region->left) * 4];
-		for( int x = 0; x < CapturedWidth; x++ ) {
+		for( int x = 0; x < capturedWidth; x++ ) {
 			*dst++ = *srcrow++;
 			*dst++ = *srcrow++;
 			*dst++ = *srcrow++;
@@ -92,22 +101,10 @@ void BitBltCapture::CaptureRegion(const RECT *region) {
 		}
 	}
 	
+	*pOutCapturedWidth = capturedWidth;
+	*pOutCapturedHeight = capturedHeight;
+	
 }
 
-// 画像データを取得
-const unsigned char *BitBltCapture::GetData() const {
-	return CapturedImageBGR.data();
-}
-
-// 画像データの長さを取得
-size_t BitBltCapture::BitBltCapture::GetDataLength() const {
-	return CapturedImageBGR.size();
-}
-
-// 画像のサイズを取得
-void BitBltCapture::GetImageSize(int *pOutWidth, int *pOutHeight) {
-	if( pOutWidth ) *pOutWidth = CapturedWidth;
-	if( pOutHeight ) *pOutHeight = CapturedHeight;
-}
 
 

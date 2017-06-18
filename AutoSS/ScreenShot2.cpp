@@ -95,16 +95,20 @@ void ScreenShot2::TakeSSFunc(void *ptr) {
 	RECT windowRect = GetWindowRegion(hCaptureWindow);
 	windowRect = ClampOutOfRegion(windowRect);
 	
-	pCap->CaptureRegion(&windowRect);
+	unsigned int buflen = pCap->CalcNecessaryBufferLength(&windowRect);
+	vecImgBuffer.resize(buflen);
 	
 	int sswidth, ssheight;
-	pCap->GetImageSize(&sswidth, &ssheight);
+	pCap->CaptureRegion(
+		&windowRect,
+		vecImgBuffer.data(), vecImgBuffer.size(),
+		&sswidth, &ssheight);
 	
 	char savename[128];
 	sprintf_s(savename, SavePathFormat.c_str(), SSCtr);
 	
 	pWriter->Write(savename, sswidth, ssheight,
-		pCap->GetData(), pCap->GetDataLength());
+		vecImgBuffer.data(), vecImgBuffer.size());
 	
 	SSCtr++;
 	

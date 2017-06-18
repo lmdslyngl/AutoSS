@@ -1,5 +1,6 @@
 ﻿
 #include "DesktopDuplCapture.h"
+#include <assert.h>
 
 DesktopDuplCapture::DesktopDuplCapture() {
 	pDevice = nullptr;
@@ -89,10 +90,20 @@ void DesktopDuplCapture::Setup() {
 }
 
 // 領域のキャプチャを行う
-void DesktopDuplCapture::CaptureRegion(const RECT *region) {
-	RegionWidth = region->right - region->left;
-	RegionHeight = region->bottom - region->top;
-	vecRegionImg.resize(RegionWidth * RegionHeight * 3);
+void DesktopDuplCapture::CaptureRegion(
+	const RECT *region,
+	unsigned char *pOutBuffer, unsigned int bufferLength,
+	int *pOutCapturedWidth, int *pOutCapturedHeight)
+{
+	
+	assert(region != nullptr);
+	assert(pOutBuffer != nullptr);
+	assert(pOutCapturedWidth != nullptr && pOutCapturedHeight != nullptr);
+	
+	int capturedWidth = region->right - region->left;
+	int capturedHeight = region->bottom - region->top;
+	unsigned int necessaryBufLen = capturedWidth * capturedHeight * 3;
+	assert(necessaryBufLen <= bufferLength);
 	
 	IDXGIResource *pDeskRes = nullptr;
 	DXGI_OUTDUPL_FRAME_INFO frameInfo;
@@ -109,13 +120,13 @@ void DesktopDuplCapture::CaptureRegion(const RECT *region) {
 	pDeviceContext->Map(pTexStaging, 0, D3D11_MAP_READ, 0, &mappedRes);
 	
 	const unsigned char *src = (const unsigned char*)mappedRes.pData;
-	unsigned char *dst = vecRegionImg.data();
+	unsigned char *dst = pOutBuffer;
 	
 	// BGRX -> BGR
-	for( int y = 0; y < RegionHeight; y++ ) {
+	for( int y = 0; y < capturedHeight; y++ ) {
 		const unsigned char *srcrow =
 			&src[((region->top + y) * duplDesc.ModeDesc.Width + region->left) * 4];
-		for( int x = 0; x < RegionWidth; x++ ) {
+		for( int x = 0; x < capturedWidth; x++ ) {
 			*dst++ = *srcrow++;
 			*dst++ = *srcrow++;
 			*dst++ = *srcrow++;
@@ -127,21 +138,8 @@ void DesktopDuplCapture::CaptureRegion(const RECT *region) {
 	
 	pDupl->ReleaseFrame();
 	
-}
-
-// 画像データを取得
-const unsigned char *DesktopDuplCapture::GetData() const {
-	return vecRegionImg.data();
-}
-
-// 画像データの長さを取得
-size_t DesktopDuplCapture::GetDataLength() const {
-	return vecRegionImg.size();
-}
-
-// 画像のサイズを取得
-void DesktopDuplCapture::GetImageSize(int *pOutWidth, int *pOutHeight) {
-	if( pOutWidth ) *pOutWidth = RegionWidth;
-	if( pOutHeight ) *pOutHeight = RegionHeight;
+	*pOutCapturedWidth = capturedWidth;
+	*pOutCapturedHeight = capturedHeight;
+	
 }
 
