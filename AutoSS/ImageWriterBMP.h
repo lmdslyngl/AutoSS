@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "ImageWriterBase.h"
+#include <vector>
 
 /*
  * BMP形式で保存
@@ -24,5 +25,7 @@ public:
 	// 連続撮影終了
 	virtual void EndCapture();
 	
+private:
+	std::vector<char> vecStreamBuf;
 };
 

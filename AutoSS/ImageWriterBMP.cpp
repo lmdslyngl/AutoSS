@@ -32,7 +32,10 @@ void ImageWriterBMP::Write(
 	header.bfReserved2 = 0;
 	header.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
 	
-	std::ofstream ofs(filename, std::ios::binary);
+	std::ofstream ofs(filename, std::ios::binary | std::ios::trunc);
+	vecStreamBuf.resize(width * height * 4);
+	ofs.rdbuf()->pubsetbuf(vecStreamBuf.data(), vecStreamBuf.size());
+	
 	ofs.write((const char*)&header, sizeof(BITMAPFILEHEADER));
 	ofs.write((const char*)&info, sizeof(BITMAPINFOHEADER));
 	
