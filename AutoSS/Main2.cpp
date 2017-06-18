@@ -2,6 +2,7 @@
 #define WXUSINGDLL
 #include <wx/wx.h>
 #include <wx/stdpaths.h>
+#include <wx/snglinst.h>
 
 #include <memory>
 #include <functional>
@@ -47,6 +48,7 @@ private:
 	std::unique_ptr<ScreenShot2> pSS;
 	AutoSSFrame *pFrame;
 	std::chrono::time_point<std::chrono::system_clock> StartTime;
+	std::unique_ptr<wxSingleInstanceChecker> pSingleChecker;
 };
 
 
@@ -55,6 +57,16 @@ wxIMPLEMENT_APP(AutoSSApp);
 
 bool AutoSSApp::OnInit() {
 	if( !wxApp::OnInit() ) return false;
+	
+	// 多重起動かどうかをチェック
+	pSingleChecker = std::make_unique<wxSingleInstanceChecker>();
+	if( pSingleChecker->IsAnotherRunning() ) {
+		wxMessageBox(
+			"AutoSSは既に起動してます",
+			"AutoSS",
+			wxOK | wxICON_ERROR);
+		return false;
+	}
 	
 	// 設定ファイル読み込み
 	pConf = std::make_unique<Config>();
