@@ -59,6 +59,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="ScreenShotBurst.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Setting.cpp">
       <SubType>
       </SubType>
@@ -107,6 +111,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="ScreenShotBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="ScreenShotBurst.h">
       <SubType>
       </SubType>
     </ClInclude>
