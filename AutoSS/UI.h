@@ -26,6 +26,9 @@ public:
 	void SetOnChangeConfFunc(std::function<void(const std::shared_ptr<Config>&)> func) {
 		this->OnChangeConfFunc = func;
 	}
+	void SetOnModeChangeFunc(std::function<void(bool)> func) {
+		this->OnModeChangeFunc = func;
+	}
 	
 	void EnableCapture() {
 		IsEnableCapture = true;
@@ -44,17 +47,21 @@ private:
 	void OnStart(wxCommandEvent &ev);
 	void OnStartImpl();
 	
+	void OnBurstCheck(wxCommandEvent &ev);
+	
 private:
 	ConfigFrame *pConfigFrame;
 	bool TakingSS;
 	
 	wxAppProgressIndicator *pProgressIndicator;
 	wxButton *pStartBtn;
+	wxCheckBox *pBurstChk;
 	bool IsEnableCapture;
 	
 	std::function<void()> OnStartFunc;
 	std::function<void()> OnStopFunc;
 	std::function<void(const std::shared_ptr<Config>&)> OnChangeConfFunc;
+	std::function<void(bool)> OnModeChangeFunc;
 	
 	std::shared_ptr<Config> pConf;
 	

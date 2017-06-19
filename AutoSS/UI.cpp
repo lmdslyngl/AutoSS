@@ -16,17 +16,24 @@ AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
 	IsEnableCapture = true;
 	
 	wxSizer *pSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxPanel *pPanel = new wxPanel(this, wxID_ANY);
+	pPanel->SetSizer(pSizer);
 	
-	pStartBtn = new wxButton(this, wxID_ANY, "Start");
+	pStartBtn = new wxButton(pPanel, wxID_ANY, "Start");
 	pStartBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnStart, this);
 	pSizer->Add(pStartBtn, wxSizerFlags(2).Expand());
+	pSizer->AddSpacer(5);
 	
-	wxButton *pConfBtn = new wxButton(this, wxID_ANY, "Config");
+	pBurstChk = new wxCheckBox(pPanel, wxID_ANY, "BurstMode");
+	pBurstChk->Bind(wxEVT_CHECKBOX, &AutoSSFrame::OnBurstCheck, this);
+	pSizer->Add(pBurstChk, wxSizerFlags(1).Expand());
+	pSizer->AddSpacer(5);
+	
+	wxButton *pConfBtn = new wxButton(pPanel, wxID_ANY, "Config");
 	pConfBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnConf, this);
 	pSizer->Add(pConfBtn, wxSizerFlags(1).Expand());
 	
-	SetSizer(pSizer);
-	SetSize(250, 100);
+	SetSize(350, 100);
 	
 	CreateStatusBar(1);
 	SetStatusText("Stopped");
@@ -89,13 +96,23 @@ void AutoSSFrame::OnStartImpl() {
 		pStartBtn->SetLabel("Stop");
 		SetStatusText("Taking");
 		if( pProgressIndicator ) pProgressIndicator->SetValue(1);
+		pBurstChk->Disable();
 	} else {
 		if( OnStopFunc ) OnStopFunc();
 		pStartBtn->SetLabel("Start");
 		if( pProgressIndicator ) pProgressIndicator->SetValue(0);
+		pBurstChk->Enable();
 	}
 }
 
+void AutoSSFrame::OnBurstCheck(wxCommandEvent &ev) {
+	if( pBurstChk->GetValue() ) {
+		pStartBtn->SetLabelText("Burst Start");
+	} else {
+		pStartBtn->SetLabelText("Start");
+	}
+	if( OnModeChangeFunc ) OnModeChangeFunc(pBurstChk->GetValue());
+}
 
 /*
  * 設定ダイアログ
