@@ -90,20 +90,32 @@ void AutoSSFrame::OnHotkey(wxKeyEvent &ev) {
 }
 
 void AutoSSFrame::OnStartImpl() {
-	TakingSS = !TakingSS;
 	if( TakingSS ) {
-		if( OnStartFunc ) OnStartFunc();
-		pStartBtn->SetLabel("Stop");
-		SetStatusText("Taking");
-		if( pProgressIndicator ) pProgressIndicator->SetValue(1);
-		pBurstChk->Disable();
-	} else {
 		if( OnStopFunc ) OnStopFunc();
-		pStartBtn->SetLabel("Start");
-		if( pProgressIndicator ) pProgressIndicator->SetValue(0);
-		pBurstChk->Enable();
+	} else {
+		if( OnStartFunc ) OnStartFunc();
 	}
 }
+
+void AutoSSFrame::Start() {
+	TakingSS = true;
+	pStartBtn->SetLabel("Stop");
+	SetStatusText("Taking");
+	if( pProgressIndicator ) pProgressIndicator->SetValue(1);
+	pBurstChk->Disable();
+}
+
+void AutoSSFrame::Stop() {
+	TakingSS = false;
+	if( pBurstChk->GetValue() ) {
+		pStartBtn->SetLabel("Burst Start");
+	} else {
+		pStartBtn->SetLabel("Start");
+	}
+	if( pProgressIndicator ) pProgressIndicator->SetValue(0);
+	pBurstChk->Enable();
+}
+
 
 void AutoSSFrame::OnBurstCheck(wxCommandEvent &ev) {
 	if( pBurstChk->GetValue() ) {

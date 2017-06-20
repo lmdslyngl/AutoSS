@@ -99,5 +99,7 @@ void ScreenShotBurst::TakeSSFunc() {
 	
 	vecImgSize.clear();
 	
+	if( OnFinishedFunc ) OnFinishedFunc();
+	
 }
 

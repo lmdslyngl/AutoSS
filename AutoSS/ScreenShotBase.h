@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <memory>
 #include <string>
+#include <functional>
 
 #include "CaptureBase.h"
 #include "ImageWriterBase.h"
@@ -76,6 +77,11 @@ public:
 		return TakenCount;
 	}
 	
+	// 撮影終了コールバック関数を設定
+	void SetOnFinishedFunc(std::function<void()> func) {
+		this->OnFinishedFunc = func;
+	}
+	
 protected:
 	
 	// ウィンドウの大きさを取得
@@ -94,5 +100,6 @@ protected:
 	std::string SavePathFormat;
 	TRIMMING_MODE TrimMode;
 	int TakenCount;
+	std::function<void()> OnFinishedFunc;
 };
 

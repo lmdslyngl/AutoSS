@@ -33,6 +33,7 @@ void ScreenShot2::Start() {
 // 連写終了
 void ScreenShot2::Stop() {
 	pTimer->Stop();
+	if( OnFinishedFunc ) OnFinishedFunc();
 }
 
 // スクリーンショット撮影

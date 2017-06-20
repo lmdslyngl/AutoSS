@@ -40,6 +40,9 @@ public:
 		pStartBtn->Disable();
 	}
 	
+	void Start();
+	void Stop();
+	
 private:
 	void OnConf(wxCommandEvent &ev);
 	

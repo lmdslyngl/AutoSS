@@ -45,6 +45,7 @@ private:
 	void OnStart();
 	void OnStop();
 	void OnChangeConf(const std::shared_ptr<Config> &pConf);
+	void OnCaptureFinished();
 	
 private:
 	std::shared_ptr<Config> pConf;
@@ -198,6 +199,7 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 			pCap, pImageWriter, "",
 			pConf->WaitTime, trimmode);
 	}
+	pSS->SetOnFinishedFunc([this]() { this->OnCaptureFinished(); });
 	
 	return pSS;
 	
@@ -234,22 +236,13 @@ void AutoSSApp::OnStart() {
 	
 	StartTime = std::chrono::system_clock::now();
 	
+	pFrame->Start();
 	pSS->Start();
 	
 }
 
 void AutoSSApp::OnStop() {
 	pSS->Stop();
-	
-	auto endTime = std::chrono::system_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - StartTime);
-	double fps = (double)pSS->GetTakenCount() / (duration.count() / 1000.0);
-	
-	std::stringstream statusText;
-	statusText << "Stopped: " << pSS->GetTakenCount() << " images taken "
-		<< "(fps: " << std::fixed << std::setprecision(2) << fps << ")";
-	pFrame->SetStatusText(statusText.str());
-	
 }
 
 void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
@@ -263,5 +256,18 @@ void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
 	}
 }
 
+void AutoSSApp::OnCaptureFinished() {
+	pFrame->Stop();
+	
+	auto endTime = std::chrono::system_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - StartTime);
+	double fps = (double)pSS->GetTakenCount() / (duration.count() / 1000.0);
+	
+	std::stringstream statusText;
+	statusText << "Stopped: " << pSS->GetTakenCount() << " images taken "
+		<< "(fps: " << std::fixed << std::setprecision(2) << fps << ")";
+	pFrame->SetStatusText(statusText.str());
+	
+}
 
 
