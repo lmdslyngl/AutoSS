@@ -242,6 +242,7 @@ void AutoSSApp::OnStart() {
 }
 
 void AutoSSApp::OnStop() {
+	pFrame->DisableCapture();
 	pSS->Stop();
 }
 
@@ -258,6 +259,7 @@ void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
 
 void AutoSSApp::OnCaptureFinished() {
 	pFrame->Stop();
+	pFrame->EnableCapture();
 	
 	auto endTime = std::chrono::system_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - StartTime);
