@@ -24,6 +24,7 @@ ScreenShotBurst::~ScreenShotBurst() {
 
 // 連写開始
 void ScreenShotBurst::Start() {
+	Stop();
 	TakenCount = 0;
 	StopFlag = false;
 	TakeThread = std::thread([this]() { this->TakeSSFunc(); });
