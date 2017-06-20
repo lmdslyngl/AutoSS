@@ -33,7 +33,7 @@ void ScreenShotBurst::Start() {
 // 連写終了
 void ScreenShotBurst::Stop() {
 	StopFlag = true;
-	if( TakeThread.joinable() ) TakeThread.join();
+	if( TakeThread.joinable() ) TakeThread.detach();
 }
 
 // スクリーンショット撮影
