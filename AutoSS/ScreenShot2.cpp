@@ -27,13 +27,21 @@ ScreenShot2::ScreenShot2(
 // 連写開始
 void ScreenShot2::Start() {
 	TakenCount = 0;
+	CapStart = std::chrono::system_clock::now();
 	pTimer->Start();
 }
 
 // 連写終了
 void ScreenShot2::Stop() {
 	pTimer->Stop();
+	
+	// FPS計算
+	auto end = std::chrono::system_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - CapStart);
+	CapturedFPS = GetTakenCount() / (elapsed.count() / 1000.0);
+	
 	if( OnFinishedFunc ) OnFinishedFunc();
+	
 }
 
 // スクリーンショット撮影

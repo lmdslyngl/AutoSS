@@ -5,6 +5,7 @@
 ScreenShotBase::ScreenShotBase() {
 	this->TrimMode = TRIMMING_WINDOW_RECT;
 	this->TakenCount = 0;
+	this->CapturedFPS = 0.0;
 	HWND hDesktopWindow = GetDesktopWindow();
 	GetWindowSize(hDesktopWindow, &DesktopWidth, &DesktopHeight);
 }

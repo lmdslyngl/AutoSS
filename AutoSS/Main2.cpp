@@ -51,7 +51,6 @@ private:
 	std::shared_ptr<Config> pConf;
 	std::unique_ptr<ScreenShotBase> pSS;
 	AutoSSFrame *pFrame;
-	std::chrono::time_point<std::chrono::system_clock> StartTime;
 	std::unique_ptr<wxSingleInstanceChecker> pSingleChecker;
 	bool IsBurstModeFlag;
 };
@@ -234,8 +233,6 @@ void AutoSSApp::OnStart() {
 		<< "ss_" << GetDateString() << "_%04d." << pConf->GetFormatExt();
 	pSS->SetSavePathFormat(nameFormat.str());
 	
-	StartTime = std::chrono::system_clock::now();
-	
 	pFrame->Start();
 	pSS->Start();
 	
@@ -261,13 +258,9 @@ void AutoSSApp::OnCaptureFinished() {
 	pFrame->Stop();
 	pFrame->EnableCapture();
 	
-	auto endTime = std::chrono::system_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - StartTime);
-	double fps = (double)pSS->GetTakenCount() / (duration.count() / 1000.0);
-	
 	std::stringstream statusText;
 	statusText << "Stopped: " << pSS->GetTakenCount() << " images taken "
-		<< "(fps: " << std::fixed << std::setprecision(2) << fps << ")";
+		<< "(fps: " << std::fixed << std::setprecision(2) << pSS->GetCapturedFPS() << ")";
 	pFrame->SetStatusText(statusText.str());
 	
 }

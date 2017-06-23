@@ -1,5 +1,6 @@
 ﻿
 #include "ScreenShotBurst.h"
+#include <chrono>
 
 ScreenShotBurst::ScreenShotBurst(
 	std::shared_ptr<CaptureBase> &pCap,
@@ -45,6 +46,7 @@ void ScreenShotBurst::TakeSSFunc() {
 	vecImgSize.reserve(NumCaptureImages);
 	
 	// 撮影
+	auto start = std::chrono::system_clock::now();
 	for( int i = 0; i < NumCaptureImages; i++ ) {
 		if( StopFlag ) break;
 		
@@ -80,6 +82,7 @@ void ScreenShotBurst::TakeSSFunc() {
 		TakenCount++;
 		
 	}
+	auto end = std::chrono::system_clock::now();
 	
 	// 書き出し
 	bufcursor = vecImgBuffer.data();
@@ -99,6 +102,10 @@ void ScreenShotBurst::TakeSSFunc() {
 	}
 	
 	vecImgSize.clear();
+	
+	// FPS計算
+	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+	CapturedFPS = GetTakenCount() / (elapsed.count() / 1000.0);
 	
 	if( OnFinishedFunc ) OnFinishedFunc();
 	

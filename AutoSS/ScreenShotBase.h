@@ -82,6 +82,11 @@ public:
 		this->OnFinishedFunc = func;
 	}
 	
+	// 撮影FPSを取得
+	double GetCapturedFPS() const {
+		return CapturedFPS;
+	}
+	
 protected:
 	
 	// ウィンドウの大きさを取得
@@ -101,5 +106,6 @@ protected:
 	TRIMMING_MODE TrimMode;
 	int TakenCount;
 	std::function<void()> OnFinishedFunc;
+	double CapturedFPS;
 };
 

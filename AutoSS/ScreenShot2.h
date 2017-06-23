@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <vector>
+#include <chrono>
 #include "ScreenShotBase.h"
 #include "TimerExec.h"
 
@@ -38,5 +39,6 @@ protected:
 protected:
 	std::unique_ptr<TimerExec> pTimer;
 	std::vector<unsigned char> vecImgBuffer;
+	std::chrono::time_point<std::chrono::system_clock> CapStart;
 };
 
