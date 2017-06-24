@@ -51,7 +51,7 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="ScreenShot2.cpp">
+    <ClCompile Include="ScreenShotNormal.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -106,7 +106,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ScreenShot2.h">
+    <ClInclude Include="ScreenShotNormal.h">
       <SubType>
       </SubType>
     </ClInclude>

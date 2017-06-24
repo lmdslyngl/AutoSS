@@ -1,5 +1,5 @@
 ﻿
-#include "ScreenShot2.h"
+#include "ScreenShotNormal.h"
 #include <sstream>
 #include <fstream>
 #include <dwmapi.h>

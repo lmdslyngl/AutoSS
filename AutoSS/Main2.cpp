@@ -16,7 +16,7 @@
 #include "DesktopDuplCapture.h"
 #include "ImageWriterBMP.h"
 #include "ImageWriterPPM.h"
-#include "ScreenShot2.h"
+#include "ScreenShotNormal.h"
 #include "ScreenShotBurst.h"
 #include "Config.h"
 

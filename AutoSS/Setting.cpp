@@ -1,7 +1,7 @@
 ﻿
 #include "Setting.h"
 #include <fstream>
-#include "ScreenShot2.h"
+#include "ScreenShotNormal.h"
 
 bool Setting::Load(const std::string &settingfile) {
 	std::ifstream ifs(settingfile);
