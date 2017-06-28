@@ -1,6 +1,7 @@
 ﻿
 #include "Config.h"
 #include <fstream>
+#include <sstream>
 #include "Util.h"
 
 /*
@@ -22,22 +23,16 @@ void Config::Load(const std::wstring &conffile) {
 }
 
 void Config::Save(const std::wstring &conffile) {
-	std::wofstream ofs(conffile);
-	if( !ofs ) {
-		throw std::exception("Failed to open conffile");
-	}
-	
-	ofs << L"SavePath=" << SavePath << L"\n";
-	ofs << L"WaitTime=" << WaitTime << L"\n";
-	ofs << L"CaptureMethod=" << std::to_wstring(CaptureMethod) << L"\n";
-	ofs << L"IncludeBorder=" << (IncludeBorder ? 1 : 0) << L"\n";
-	ofs << L"HotkeyMod=" << std::to_wstring(HotkeyMod) << L"\n";
-	ofs << L"HotkeyCode=" << std::to_wstring(HotkeyCode) << L"\n";
-	ofs << L"HotkeyCodeRaw=" << std::to_wstring(HotkeyCodeRaw) << L"\n";
-	ofs << L"ImageFormat=" << std::to_wstring(ImageFormat) << L"\n";
-	
-	ofs.close();
-	
+	std::wstringstream ss;
+	ss << L"SavePath=" << SavePath << L"\n";
+	ss << L"WaitTime=" << WaitTime << L"\n";
+	ss << L"CaptureMethod=" << std::to_wstring(CaptureMethod) << L"\n";
+	ss << L"IncludeBorder=" << (IncludeBorder ? 1 : 0) << L"\n";
+	ss << L"HotkeyMod=" << std::to_wstring(HotkeyMod) << L"\n";
+	ss << L"HotkeyCode=" << std::to_wstring(HotkeyCode) << L"\n";
+	ss << L"HotkeyCodeRaw=" << std::to_wstring(HotkeyCodeRaw) << L"\n";
+	ss << L"ImageFormat=" << std::to_wstring(ImageFormat) << L"\n";
+	WriteUtf8File(conffile, ss.str());
 }
 
 
