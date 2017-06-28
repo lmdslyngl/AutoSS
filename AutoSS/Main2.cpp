@@ -66,8 +66,8 @@ bool AutoSSApp::OnInit() {
 	pSingleChecker = std::make_unique<wxSingleInstanceChecker>();
 	if( pSingleChecker->IsAnotherRunning() ) {
 		wxMessageBox(
-			"AutoSSは既に起動してます",
-			"AutoSS",
+			L"AutoSSは既に起動してます",
+			L"AutoSS",
 			wxOK | wxICON_ERROR);
 		return false;
 	}
@@ -75,11 +75,11 @@ bool AutoSSApp::OnInit() {
 	// 設定ファイル読み込み
 	pConf = std::make_unique<Config>();
 	try {
-		pConf->Load("AutoSS.ini");
+		pConf->Load(L"AutoSS.ini");
 	} catch( std::exception &e ) {
 		wxMessageBox(
-			"設定ファイルの読み込みに失敗しました\n" + std::string(e.what()),
-			"AutoSS",
+			L"設定ファイルの読み込みに失敗しました\n" + std::string(e.what()),
+			L"AutoSS",
 			wxOK | wxICON_ERROR);
 		return nullptr;
 	}
@@ -115,7 +115,7 @@ bool AutoSSApp::OnInit() {
 }
 
 int AutoSSApp::OnExit() {
-	pConf->Save("AutoSS.ini");
+	pConf->Save(L"AutoSS.ini");
 	return wxApp::OnExit();
 }
 
@@ -135,8 +135,8 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 			pCap = pCapBitblt;
 		} catch( std::exception & ) {
 			wxMessageBox(
-				"BitBltCaptureの初期化に失敗しました",
-				"AutoSS",
+				L"BitBltCaptureの初期化に失敗しました",
+				L"AutoSS",
 				wxOK | wxICON_ERROR);
 			return nullptr;
 		}
@@ -150,17 +150,17 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 		} catch( std::exception & ) {
 			wxMessageBox(
 				wxString(
-					"DesktopDuplCaptureの初期化に失敗しました\n"
-					"設定からキャプチャ方式をBitBltに変更してみてください\n"),
-				"AutoSS",
+					L"DesktopDuplCaptureの初期化に失敗しました\n"
+					L"設定からキャプチャ方式をBitBltに変更してみてください\n"),
+				L"AutoSS",
 				wxOK | wxICON_ERROR);
 			return nullptr;
 		}
 		
 	} else {
 		wxMessageBox(
-			"不正なキャプチャ方式です: " + pConf->CaptureMethod,
-			"AutoSS",
+			L"不正なキャプチャ方式です: " + pConf->CaptureMethod,
+			L"AutoSS",
 			wxOK | wxICON_ERROR);
 		return nullptr;
 	}
@@ -173,8 +173,8 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 		pImageWriter = std::make_shared<ImageWriterBMP>();
 	} else {
 		wxMessageBox(
-			"不正な画像形式です: " + pConf->ImageFormat,
-			"AutoSS",
+			L"不正な画像形式です: " + pConf->ImageFormat,
+			L"AutoSS",
 			wxOK | wxICON_ERROR);
 		return nullptr;
 	}
@@ -191,11 +191,11 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 	std::unique_ptr<ScreenShotBase> pSS;
 	if( burstMode ) {
 		pSS = std::make_unique<ScreenShotBurst>(
-			pCap, pImageWriter, "",
+			pCap, pImageWriter, L"",
 			trimmode, 100);
 	} else {
 		pSS = std::make_unique<ScreenShot2>(
-			pCap, pImageWriter, "",
+			pCap, pImageWriter, L"",
 			pConf->WaitTime, trimmode);
 	}
 	pSS->SetOnFinishedFunc([this]() { this->OnCaptureFinished(); });
@@ -222,15 +222,15 @@ std::string AutoSSApp::GetDateString() const {
 
 void AutoSSApp::OnStart() {
 	// スクリーンショットのファイル名フォーマット設定
-	std::string savepath = pConf->SavePath;
+	std::wstring savepath = pConf->SavePath;
 	if( pConf->SavePath.empty() ) {
 		// 保存ディレクトリが空の場合は，ピクチャフォルダに保存
 		savepath = wxStandardPaths::Get().GetUserDir(wxStandardPaths::Dir_Pictures);
 	}
 	
-	std::stringstream nameFormat;
-	nameFormat << savepath << "\\"
-		<< "ss_" << GetDateString() << "_%04d." << pConf->GetFormatExt();
+	std::wstringstream nameFormat;
+	nameFormat << savepath << L"\\"
+		<< L"ss_" << GetDateString() << L"_%04d." << pConf->GetFormatExt();
 	pSS->SetSavePathFormat(nameFormat.str());
 	
 	pFrame->Start();
@@ -258,9 +258,9 @@ void AutoSSApp::OnCaptureFinished() {
 	pFrame->Stop();
 	pFrame->EnableCapture();
 	
-	std::stringstream statusText;
-	statusText << "Stopped: " << pSS->GetTakenCount() << " images taken "
-		<< "(fps: " << std::fixed << std::setprecision(2) << pSS->GetCapturedFPS() << ")";
+	std::wstringstream statusText;
+	statusText << L"Stopped: " << pSS->GetTakenCount() << L" images taken "
+		<< L"(fps: " << std::fixed << std::setprecision(2) << pSS->GetCapturedFPS() << L")";
 	pFrame->SetStatusText(statusText.str());
 	
 }

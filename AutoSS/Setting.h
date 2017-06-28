@@ -11,22 +11,22 @@ public:
 	Setting() = default;
 	~Setting() = default;
 	
-	bool Load(const std::string &settingfile);
+	bool Load(const std::wstring &settingfile);
 	
-	const std::string &GetSavePath() const {
-		return GetValueOrDefault("SavePath");
+	const std::wstring &GetSavePath() const {
+		return GetValueOrDefault(L"SavePath");
 	}
 	
-	const std::string &GetSaveFormat() const {
-		return GetValueOrDefault("SaveFormat", "ppm");
+	const std::wstring &GetSaveFormat() const {
+		return GetValueOrDefault(L"SaveFormat", L"ppm");
 	}
 	
 	int GetWait() const {
-		return std::stoi(GetValueOrDefault("Wait", "100"));
+		return std::stoi(GetValueOrDefault(L"Wait", L"100"));
 	}
 	
-	const std::string &GetCaptureMethod() const {
-		return GetValueOrDefault("CaptureMethod", "bitblt");
+	const std::wstring &GetCaptureMethod() const {
+		return GetValueOrDefault(L"CaptureMethod", L"bitblt");
 	}
 	
 	TRIMMING_MODE GetTrimmingMode() const;
@@ -34,9 +34,9 @@ public:
 protected:
 	
 	// マップに値が無ければデフォルトの値を取得する
-	const std::string &GetValueOrDefault(
-		const std::string &key,
-		const std::string &def = std::string()) const
+	const std::wstring &GetValueOrDefault(
+		const std::wstring &key,
+		const std::wstring &def = std::wstring()) const
 	{
 		auto it = mapKeyValues.find(key);
 		if( it == mapKeyValues.end() ) {
@@ -47,5 +47,5 @@ protected:
 	}
 	
 protected:
-	std::map<std::string, std::string> mapKeyValues;
+	std::map<std::wstring, std::wstring> mapKeyValues;
 };

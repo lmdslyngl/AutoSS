@@ -6,7 +6,7 @@
 
 // 画像を保存
 void ImageWriterBMP::Write(
-	const std::string &filename,
+	const std::wstring &filename,
 	int width, int height,
 	const unsigned char *data,
 	size_t length)

@@ -5,7 +5,7 @@
 ScreenShotBurst::ScreenShotBurst(
 	std::shared_ptr<CaptureBase> &pCap,
 	std::shared_ptr<ImageWriterBase> &pWriter,
-	const std::string &savePathFormat,
+	const std::wstring &savePathFormat,
 	TRIMMING_MODE trimMode,
 	unsigned int numCaptureImages)
 	: ScreenShotBase()
@@ -87,8 +87,8 @@ void ScreenShotBurst::TakeSSFunc() {
 	// 書き出し
 	bufcursor = vecImgBuffer.data();
 	for( unsigned int i = 0; i < vecImgSize.size(); i++ ) {
-		char savename[128];
-		sprintf_s(savename, SavePathFormat.c_str(), i);
+		wchar_t savename[128];
+		swprintf_s(savename, SavePathFormat.c_str(), i);
 		
 		const auto &size = vecImgSize[i];
 		sswidth = std::get<0>(size);

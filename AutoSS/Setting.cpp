@@ -3,19 +3,19 @@
 #include <fstream>
 #include "ScreenShotNormal.h"
 
-bool Setting::Load(const std::string &settingfile) {
-	std::ifstream ifs(settingfile);
+bool Setting::Load(const std::wstring &settingfile) {
+	std::wifstream ifs(settingfile);
 	if( !ifs ) return false;
 	
-	std::string line;
+	std::wstring line;
 	while( std::getline(ifs, line) ) {
 		// 行頭が#ならコメント
-		if( line[0] == '#' ) continue;
+		if( line[0] == L'#' ) continue;
 		
-		std::string::size_type splitpos = line.find('=');
-		if( splitpos != std::string::npos ) {
-			std::string key = line.substr(0, splitpos);
-			std::string val = line.substr(splitpos + 1);
+		std::wstring::size_type splitpos = line.find(L'=');
+		if( splitpos != std::wstring::npos ) {
+			std::wstring key = line.substr(0, splitpos);
+			std::wstring val = line.substr(splitpos + 1);
 			mapKeyValues[key] = val;
 		}
 		
@@ -28,12 +28,12 @@ bool Setting::Load(const std::string &settingfile) {
 }
 
 TRIMMING_MODE Setting::GetTrimmingMode() const {
-	const std::string &mode = GetValueOrDefault("TrimmingMode", "window");
-	if( mode == "window" ) {
+	const std::wstring &mode = GetValueOrDefault(L"TrimmingMode", L"window");
+	if( mode == L"window" ) {
 		return TRIMMING_WINDOW_RECT;
-	} else if( mode == "window_dwm" ) {
+	} else if( mode == L"window_dwm" ) {
 		return TRIMMING_WINDOW_RECT_DWM;
-	} else if( mode == "client" ) {
+	} else if( mode == L"client" ) {
 		return TRIMMING_CLIENT_RECT;
 	}
 	return TRIMMING_WINDOW_RECT;

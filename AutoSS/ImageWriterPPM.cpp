@@ -5,7 +5,7 @@
 
 // 画像を保存
 void ImageWriterPPM::Write(
-	const std::string &filename,
+	const std::wstring &filename,
 	int width, int height,
 	const unsigned char *data,
 	size_t length)

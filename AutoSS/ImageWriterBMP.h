@@ -14,7 +14,7 @@ public:
 	
 	// 画像を保存
 	virtual void Write(
-		const std::string &filename,
+		const std::wstring &filename,
 		int width, int height,
 		const unsigned char *data,
 		size_t length);

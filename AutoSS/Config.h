@@ -28,18 +28,18 @@ public:
 	Config() = default;
 	~Config() = default;
 	
-	void Load(const std::string &conffile);
-	void Save(const std::string &conffile);
+	void Load(const std::wstring &conffile);
+	void Save(const std::wstring &conffile);
 	
 	// 画像書き出しフォーマットの拡張子を取得
-	std::string GetFormatExt() const {
-		if( ImageFormat == IMGFMT_BMP ) return "bmp";
-		else if( ImageFormat == IMGFMT_PPM ) return "ppm";
-		return "";
+	std::wstring GetFormatExt() const {
+		if( ImageFormat == IMGFMT_BMP ) return L"bmp";
+		else if( ImageFormat == IMGFMT_PPM ) return L"ppm";
+		return L"";
 	}
 	
 public:
-	std::string SavePath;
+	std::wstring SavePath;
 	unsigned int WaitTime;
 	CAPTURE_METHOD CaptureMethod;
 	bool IncludeBorder;
@@ -50,7 +50,7 @@ public:
 	
 private:
 	// 設定ファイルをキーと値に切り分ける
-	std::map<std::string, std::string> ParseConfFile(const std::string &conffile);
+	std::map<std::wstring, std::wstring> ParseConfFile(const std::wstring &conffile);
 	
 };
 

@@ -1,39 +1,40 @@
 ﻿
 #include "Config.h"
 #include <fstream>
+#include "Util.h"
 
 /*
  * 設定クラス
 */
 
-void Config::Load(const std::string &conffile) {
+void Config::Load(const std::wstring &conffile) {
 	auto mapKeyValues = ParseConfFile(conffile);
 	
-	SavePath = mapKeyValues["SavePath"];
-	WaitTime = std::stoi(mapKeyValues["WaitTime"]);
-	CaptureMethod = (CAPTURE_METHOD)std::stoi(mapKeyValues["CaptureMethod"]);
-	IncludeBorder = std::stoi(mapKeyValues["IncludeBorder"]) ? true : false;
-	HotkeyMod = std::stoi(mapKeyValues["HotkeyMod"]);
-	HotkeyCode = std::stoi(mapKeyValues["HotkeyCode"]);
-	HotkeyCodeRaw = std::stoi(mapKeyValues["HotkeyCodeRaw"]);
-	ImageFormat = (IMAGE_FORMAT)std::stoi(mapKeyValues["ImageFormat"]);
+	SavePath = mapKeyValues[L"SavePath"];
+	WaitTime = std::stoi(mapKeyValues[L"WaitTime"]);
+	CaptureMethod = (CAPTURE_METHOD)std::stoi(mapKeyValues[L"CaptureMethod"]);
+	IncludeBorder = std::stoi(mapKeyValues[L"IncludeBorder"]) ? true : false;
+	HotkeyMod = std::stoi(mapKeyValues[L"HotkeyMod"]);
+	HotkeyCode = std::stoi(mapKeyValues[L"HotkeyCode"]);
+	HotkeyCodeRaw = std::stoi(mapKeyValues[L"HotkeyCodeRaw"]);
+	ImageFormat = (IMAGE_FORMAT)std::stoi(mapKeyValues[L"ImageFormat"]);
 	
 }
 
-void Config::Save(const std::string &conffile) {
-	std::ofstream ofs(conffile);
+void Config::Save(const std::wstring &conffile) {
+	std::wofstream ofs(conffile);
 	if( !ofs ) {
 		throw std::exception("Failed to open conffile");
 	}
 	
-	ofs << "SavePath=" << SavePath << "\n";
-	ofs << "WaitTime=" << WaitTime << "\n";
-	ofs << "CaptureMethod=" << std::to_string(CaptureMethod) << "\n";
-	ofs << "IncludeBorder=" << (IncludeBorder ? 1 : 0) << "\n";
-	ofs << "HotkeyMod=" << std::to_string(HotkeyMod) << "\n";
-	ofs << "HotkeyCode=" << std::to_string(HotkeyCode) << "\n";
-	ofs << "HotkeyCodeRaw=" << std::to_string(HotkeyCodeRaw) << "\n";
-	ofs << "ImageFormat=" << std::to_string(ImageFormat) << "\n";
+	ofs << L"SavePath=" << SavePath << L"\n";
+	ofs << L"WaitTime=" << WaitTime << L"\n";
+	ofs << L"CaptureMethod=" << std::to_wstring(CaptureMethod) << L"\n";
+	ofs << L"IncludeBorder=" << (IncludeBorder ? 1 : 0) << L"\n";
+	ofs << L"HotkeyMod=" << std::to_wstring(HotkeyMod) << L"\n";
+	ofs << L"HotkeyCode=" << std::to_wstring(HotkeyCode) << L"\n";
+	ofs << L"HotkeyCodeRaw=" << std::to_wstring(HotkeyCodeRaw) << L"\n";
+	ofs << L"ImageFormat=" << std::to_wstring(ImageFormat) << L"\n";
 	
 	ofs.close();
 	
@@ -41,29 +42,23 @@ void Config::Save(const std::string &conffile) {
 
 
 // 設定ファイルをキーと値に切り分ける
-std::map<std::string, std::string> Config::ParseConfFile(const std::string &conffile) {
-	std::ifstream ifs(conffile);
-	if( !ifs ) {
-		throw std::exception("Failed to open conffile");
-	}
+std::map<std::wstring, std::wstring> Config::ParseConfFile(const std::wstring &conffile) {
+	std::wstring confFileContent = ReadUtf8File(conffile);
+	std::map<std::wstring, std::wstring> mapKeyValues;
 	
-	std::map<std::string, std::string> mapKeyValues;
-	
-	std::string line;
-	while( std::getline(ifs, line) ) {
-		// 行頭が#ならコメント
-		if( line[0] == '#' ) continue;
+	std::vector<std::wstring> vecLines = SplitStr(confFileContent, L'\n');
+	for( const std::wstring &line : vecLines ) {
+		// 先頭が#ならコメント
+		if( line[0] == L'#' ) continue;
 		
-		std::string::size_type splitpos = line.find('=');
-		if( splitpos != std::string::npos ) {
-			std::string key = line.substr(0, splitpos);
-			std::string val = line.substr(splitpos + 1);
+		std::wstring::size_type splitpos = line.find(L'=');
+		if( splitpos != std::wstring::npos ) {
+			std::wstring key = line.substr(0, splitpos);
+			std::wstring val = line.substr(splitpos + 1);
 			mapKeyValues[key] = val;
 		}
 		
 	}
-	
-	ifs.close();
 	
 	return mapKeyValues;
 	

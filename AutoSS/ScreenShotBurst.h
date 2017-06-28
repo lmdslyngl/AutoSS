@@ -11,7 +11,7 @@ public:
 	ScreenShotBurst(
 		std::shared_ptr<CaptureBase> &pCap,
 		std::shared_ptr<ImageWriterBase> &pWriter,
-		const std::string &savePathFormat,
+		const std::wstring &savePathFormat,
 		TRIMMING_MODE trimMode,
 		unsigned int numCaptureImages);
 	

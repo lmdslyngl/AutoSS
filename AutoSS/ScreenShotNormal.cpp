@@ -7,7 +7,7 @@
 ScreenShot2::ScreenShot2(
 	std::shared_ptr<CaptureBase> &pCap,
 	std::shared_ptr<ImageWriterBase> &pWriter,
-	const std::string &savePathFormat,
+	const std::wstring &savePathFormat,
 	int waitTimeMillisec,
 	TRIMMING_MODE trimMode)
 	: ScreenShotBase()
@@ -59,8 +59,8 @@ void ScreenShot2::TakeSSFunc(void *ptr) {
 		vecImgBuffer.data(), vecImgBuffer.size(),
 		&sswidth, &ssheight);
 	
-	char savename[128];
-	sprintf_s(savename, SavePathFormat.c_str(), TakenCount);
+	wchar_t savename[128];
+	swprintf_s(savename, SavePathFormat.c_str(), TakenCount);
 	
 	pWriter->Write(savename, sswidth, ssheight,
 		vecImgBuffer.data(), vecImgBuffer.size());

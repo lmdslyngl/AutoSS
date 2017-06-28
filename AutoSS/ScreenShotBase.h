@@ -53,12 +53,12 @@ public:
 	}
 	
 	// 画像保存パスフォーマット設定
-	void SetSavePathFormat(const std::string &format) {
+	void SetSavePathFormat(const std::wstring &format) {
 		this->SavePathFormat = format;
 	}
 	
 	// 画像保存パスフォーマット取得
-	const std::string &GetSavePathFormat() const {
+	const std::wstring &GetSavePathFormat() const {
 		return SavePathFormat;
 	}
 	
@@ -102,7 +102,7 @@ protected:
 	int DesktopWidth, DesktopHeight;
 	std::shared_ptr<CaptureBase> pCap;
 	std::shared_ptr<ImageWriterBase> pWriter;
-	std::string SavePathFormat;
+	std::wstring SavePathFormat;
 	TRIMMING_MODE TrimMode;
 	int TakenCount;
 	std::function<void()> OnFinishedFunc;

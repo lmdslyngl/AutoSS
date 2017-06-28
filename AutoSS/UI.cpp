@@ -7,7 +7,7 @@
  * AutoSSウィンドウ
 */
 AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
-	: wxFrame(nullptr, wxID_ANY, "AutoSS")
+	: wxFrame(nullptr, wxID_ANY, L"AutoSS")
 {
 	
 	this->pConf = pConf;
@@ -19,24 +19,24 @@ AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
 	wxPanel *pPanel = new wxPanel(this, wxID_ANY);
 	pPanel->SetSizer(pSizer);
 	
-	pStartBtn = new wxButton(pPanel, wxID_ANY, "Start");
+	pStartBtn = new wxButton(pPanel, wxID_ANY, L"Start");
 	pStartBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnStart, this);
 	pSizer->Add(pStartBtn, wxSizerFlags(2).Expand());
 	pSizer->AddSpacer(5);
 	
-	pBurstChk = new wxCheckBox(pPanel, wxID_ANY, "BurstMode");
+	pBurstChk = new wxCheckBox(pPanel, wxID_ANY, L"BurstMode");
 	pBurstChk->Bind(wxEVT_CHECKBOX, &AutoSSFrame::OnBurstCheck, this);
 	pSizer->Add(pBurstChk, wxSizerFlags(1).Expand());
 	pSizer->AddSpacer(5);
 	
-	wxButton *pConfBtn = new wxButton(pPanel, wxID_ANY, "Config");
+	wxButton *pConfBtn = new wxButton(pPanel, wxID_ANY, L"Config");
 	pConfBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnConf, this);
 	pSizer->Add(pConfBtn, wxSizerFlags(1).Expand());
 	
 	SetSize(350, 100);
 	
 	CreateStatusBar(1);
-	SetStatusText("Stopped");
+	SetStatusText(L"Stopped");
 	
 	// ホットキー
 	Bind(wxEVT_HOTKEY, &AutoSSFrame::OnHotkey, this);
@@ -99,8 +99,8 @@ void AutoSSFrame::OnStartImpl() {
 
 void AutoSSFrame::Start() {
 	TakingSS = true;
-	pStartBtn->SetLabel("Stop");
-	SetStatusText("Taking");
+	pStartBtn->SetLabel(L"Stop");
+	SetStatusText(L"Taking");
 	if( pProgressIndicator ) pProgressIndicator->SetValue(1);
 	pBurstChk->Disable();
 }
@@ -108,9 +108,9 @@ void AutoSSFrame::Start() {
 void AutoSSFrame::Stop() {
 	TakingSS = false;
 	if( pBurstChk->GetValue() ) {
-		pStartBtn->SetLabel("Burst Start");
+		pStartBtn->SetLabel(L"Burst Start");
 	} else {
-		pStartBtn->SetLabel("Start");
+		pStartBtn->SetLabel(L"Start");
 	}
 	if( pProgressIndicator ) pProgressIndicator->SetValue(0);
 	pBurstChk->Enable();
@@ -119,9 +119,9 @@ void AutoSSFrame::Stop() {
 
 void AutoSSFrame::OnBurstCheck(wxCommandEvent &ev) {
 	if( pBurstChk->GetValue() ) {
-		pStartBtn->SetLabelText("Burst Start");
+		pStartBtn->SetLabelText(L"Burst Start");
 	} else {
-		pStartBtn->SetLabelText("Start");
+		pStartBtn->SetLabelText(L"Start");
 	}
 	if( OnModeChangeFunc ) OnModeChangeFunc(pBurstChk->GetValue());
 }
@@ -130,7 +130,7 @@ void AutoSSFrame::OnBurstCheck(wxCommandEvent &ev) {
  * 設定ダイアログ
 */
 ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitConf)
-	: wxDialog(pParent, wxID_ANY, "AutoSS設定")
+	: wxDialog(pParent, wxID_ANY, L"AutoSS設定")
 {
 	
 	RegisteringHotkey = false;
@@ -149,7 +149,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxBoxSizer *pSavePathSizer = new wxBoxSizer(wxHORIZONTAL);
 	pSavePathSizer->AddSpacer(10);
 	
-	wxStaticText *pSavePathLabel = new wxStaticText(this, wxID_ANY, "SS保存先");
+	wxStaticText *pSavePathLabel = new wxStaticText(this, wxID_ANY, L"SS保存先");
 	pSavePathSizer->Add(pSavePathLabel, wxSizerFlags().CenterVertical());
 	pSavePathSizer->AddSpacer(5);
 	
@@ -158,7 +158,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pSavePathSizer->AddSpacer(5);
 	
 	pSavePathRefButton = new wxButton(
-		this, wxID_ANY, "参照",
+		this, wxID_ANY, L"参照",
 		wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	pSavePathRefButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnSavePathRef, this);
 	pSavePathSizer->Add(pSavePathRefButton, wxSizerFlags().CenterVertical());
@@ -176,7 +176,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxBoxSizer *pWaitTimeSizer = new wxBoxSizer(wxHORIZONTAL);
 	pWaitTimeSizer->AddSpacer(10);
 	
-	wxStaticText *pWaitTimeLabel = new wxStaticText(this, wxID_ANY, "撮影間隔（ミリ秒）");
+	wxStaticText *pWaitTimeLabel = new wxStaticText(this, wxID_ANY, L"撮影間隔（ミリ秒）");
 	pWaitTimeSizer->Add(pWaitTimeLabel, wxSizerFlags().CenterVertical());
 	pWaitTimeSizer->AddSpacer(5);
 	
@@ -199,7 +199,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxBoxSizer *pCaptureSizer = new wxBoxSizer(wxHORIZONTAL);
 	pCaptureSizer->AddSpacer(10);
 	
-	wxStaticText *pCaptureLabel = new wxStaticText(this, wxID_ANY, "キャプチャ方式");
+	wxStaticText *pCaptureLabel = new wxStaticText(this, wxID_ANY, L"キャプチャ方式");
 	pCaptureSizer->Add(pCaptureLabel, wxSizerFlags().CenterVertical());
 	pCaptureSizer->AddSpacer(5);
 	
@@ -207,8 +207,8 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 		this, wxID_ANY, wxEmptyString,
 		wxDefaultPosition, wxDefaultSize,
 		0, nullptr, wxCB_READONLY);
-	pCaptureCombo->Append("BitBlt");
-	pCaptureCombo->Append("Desktop Duplication API");
+	pCaptureCombo->Append(L"BitBlt");
+	pCaptureCombo->Append(L"Desktop Duplication API");
 	pCaptureCombo->Select(pInitConf->CaptureMethod);
 	pCaptureSizer->Add(pCaptureCombo, wxSizerFlags().CenterVertical());
 	
@@ -225,7 +225,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxBoxSizer *pBorderSizer = new wxBoxSizer(wxHORIZONTAL);
 	pBorderSizer->AddSpacer(10);
 	
-	pIncludeBorderCheck = new wxCheckBox(this, wxID_ANY, "ウィンドウの枠を含める");
+	pIncludeBorderCheck = new wxCheckBox(this, wxID_ANY, L"ウィンドウの枠を含める");
 	pIncludeBorderCheck->SetValue(pInitConf->IncludeBorder);
 	pBorderSizer->Add(pIncludeBorderCheck);
 	
@@ -244,17 +244,17 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxBoxSizer *pHotkeySizer = new wxBoxSizer(wxHORIZONTAL);
 	pHotkeySizer->AddSpacer(10);
 	
-	wxStaticText *pHotkeyLabel = new wxStaticText(this, wxID_ANY, "ショートカット");
+	wxStaticText *pHotkeyLabel = new wxStaticText(this, wxID_ANY, L"ショートカット");
 	pHotkeySizer->Add(pHotkeyLabel, wxSizerFlags().CenterVertical());
 	pHotkeySizer->AddSpacer(5);
 	
-	pHotkeyText = new wxTextCtrl(this, wxID_ANY, "",
+	pHotkeyText = new wxTextCtrl(this, wxID_ANY, L"",
 		wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	pHotkeyText->SetValue(wxAcceleratorEntry(HotkeyMod, HotkeyCode).ToString());
 	pHotkeySizer->Add(pHotkeyText, wxSizerFlags(1).CenterVertical());
 	pHotkeySizer->AddSpacer(5);
 	
-	pHotkeyRegButton = new wxButton(this, wxID_ANY, "登録開始");
+	pHotkeyRegButton = new wxButton(this, wxID_ANY, L"登録開始");
 	pHotkeyRegButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnRegisterHotkey, this);
 	pHotkeySizer->Add(pHotkeyRegButton, wxSizerFlags().CenterVertical());
 	pHotkeySizer->AddSpacer(10);
@@ -269,11 +269,11 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxBoxSizer *pOKCancelSizer = new wxBoxSizer(wxHORIZONTAL);
 	pOKCancelSizer->AddSpacer(10);
 	
-	pOKButton = new wxButton(this, wxID_ANY, "OK");
+	pOKButton = new wxButton(this, wxID_ANY, L"OK");
 	pOKButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnOK, this);
 	pOKCancelSizer->Add(pOKButton);
 	
-	pCancelButton = new wxButton(this, wxID_ANY, "キャンセル");
+	pCancelButton = new wxButton(this, wxID_ANY, L"キャンセル");
 	pCancelButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnCancel, this);
 	pOKCancelSizer->Add(pCancelButton);
 	pOKCancelSizer->AddSpacer(10);
@@ -301,8 +301,8 @@ std::shared_ptr<Config> ConfigFrame::GetConfig() const {
 
 void ConfigFrame::OnSavePathRef(wxCommandEvent &ev) {
 	wxDirDialog dlg(this,
-		"スクリーンショット保存先",
-		"", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+		L"スクリーンショット保存先",
+		L"", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
 	dlg.ShowModal();
 	
 	wxString path = dlg.GetPath();
@@ -325,7 +325,7 @@ void ConfigFrame::OnCancel(wxCommandEvent &ev) {
 void ConfigFrame::OnRegisterHotkey(wxCommandEvent &ev) {
 	RegisteringHotkey = !RegisteringHotkey;
 	if( RegisteringHotkey ) {
-		pHotkeyRegButton->SetLabel("登録完了");
+		pHotkeyRegButton->SetLabel(L"登録完了");
 		pSavePathText->Disable();
 		pSavePathRefButton->Disable();
 		pWaitTimeText->Disable();
@@ -334,7 +334,7 @@ void ConfigFrame::OnRegisterHotkey(wxCommandEvent &ev) {
 		pOKButton->Disable();
 		pCancelButton->Disable();
 	} else {
-		pHotkeyRegButton->SetLabel("登録開始");
+		pHotkeyRegButton->SetLabel(L"登録開始");
 		pSavePathText->Enable();
 		pSavePathRefButton->Enable();
 		pWaitTimeText->Enable();

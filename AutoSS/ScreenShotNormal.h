@@ -11,7 +11,7 @@ public:
 	ScreenShot2(
 		std::shared_ptr<CaptureBase> &pCap,
 		std::shared_ptr<ImageWriterBase> &pWriter,
-		const std::string &savePathFormat,
+		const std::wstring &savePathFormat,
 		int waitTimeMillisec,
 		TRIMMING_MODE trimMode);
 	
