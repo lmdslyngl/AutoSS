@@ -103,6 +103,8 @@ private:
 	void OnKeyDown(wxKeyEvent &ev);
 	
 	void OnRegionComboChanged(wxCommandEvent &ev);
+	void OnRegionSelect(wxCommandEvent &ev);
+	void OnRegionSelectFinished();
 	
 	// 撮影範囲コンボボックスによって選択範囲の有効/無効を更新する
 	void UpdateRegionSelectionEnabling();
@@ -129,6 +131,10 @@ private:
 	int HotkeyCode, HotkeyCodeRaw, HotkeyMod;
 	wxButton *pOKButton, *pCancelButton;
 	bool CloseState;
+	RegionSelectWindow *pRgnSelWnd;
+};
+
+
 /*
  * 範囲選択ウィンドウ
 */

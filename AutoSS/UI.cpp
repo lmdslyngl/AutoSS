@@ -139,6 +139,11 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	// ホットキー登録用キーイベントフック
 	Bind(wxEVT_CHAR_HOOK, &ConfigFrame::OnKeyDown, this);
 	
+	// 領域選択ウィンドウ
+	pRgnSelWnd = new RegionSelectWindow();
+	pRgnSelWnd->SetRegionFinishedCallback(
+		[this]() { this->OnRegionSelectFinished(); });
+	
 	wxFlexGridSizer *pDialogSizer = new wxFlexGridSizer(2, wxSize(5, 5));
 	pDialogSizer->AddSpacer(0);
 	pDialogSizer->AddStretchSpacer();
@@ -327,6 +332,7 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	// 範囲選択ボタン
 	pRegionSelectBtn = new wxButton(
 		pRegionSelectPanel, wxID_ANY, L"マウスで選択");
+	pRegionSelectBtn->Bind(wxEVT_BUTTON, &ConfigFrame::OnRegionSelect, this);
 	
 	//
 	// 配置
@@ -401,11 +407,13 @@ void ConfigFrame::OnSavePathRef(wxCommandEvent &ev) {
 
 void ConfigFrame::OnOK(wxCommandEvent &ev) {
 	Close();
+	pRgnSelWnd->Close();
 	CloseState = true;
 }
 
 void ConfigFrame::OnCancel(wxCommandEvent &ev) {
 	Close();
+	pRgnSelWnd->Close();
 	CloseState = false;
 }
 
