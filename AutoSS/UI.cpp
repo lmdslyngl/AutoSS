@@ -281,6 +281,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pDialogSizer->AddStretchSpacer();
 	
 	Fit();
+	UpdateRegionSelectionEnabling();
 	
 }
 
@@ -457,6 +458,11 @@ void ConfigFrame::OnKeyDown(wxKeyEvent &ev) {
 }
 
 void ConfigFrame::OnRegionComboChanged(wxCommandEvent &ev) {
+	UpdateRegionSelectionEnabling();
+}
+
+// 撮影範囲コンボボックスによって選択範囲の有効/無効を更新する
+void ConfigFrame::UpdateRegionSelectionEnabling() {
 	CAPTURE_REGION region = (CAPTURE_REGION)pRegionCombo->GetSelection();
 	
 	if( region == CAPTURE_REGION_ACTIVE_WINDOW || region == CAPTURE_REGION_SELECTED_WINDOW ) {
@@ -472,5 +478,4 @@ void ConfigFrame::OnRegionComboChanged(wxCommandEvent &ev) {
 	}
 	
 }
-
 

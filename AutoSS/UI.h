@@ -102,6 +102,9 @@ private:
 	
 	void OnRegionComboChanged(wxCommandEvent &ev);
 	
+	// 撮影範囲コンボボックスによって選択範囲の有効/無効を更新する
+	void UpdateRegionSelectionEnabling();
+	
 	wxPanel *CreateRegionSelectPanel(
 		const std::shared_ptr<Config> &pInitConf);
 	
