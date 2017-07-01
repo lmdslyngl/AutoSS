@@ -415,7 +415,9 @@ void ConfigFrame::OnRegisterHotkey(wxCommandEvent &ev) {
 		pSavePathRefButton->Disable();
 		pWaitTimeText->Disable();
 		pCaptureCombo->Disable();
+		pRegionCombo->Disable();
 		pIncludeBorderCheck->Disable();
+		pRegionSelectPanel->Disable();
 		pOKButton->Disable();
 		pCancelButton->Disable();
 	} else {
@@ -424,7 +426,9 @@ void ConfigFrame::OnRegisterHotkey(wxCommandEvent &ev) {
 		pSavePathRefButton->Enable();
 		pWaitTimeText->Enable();
 		pCaptureCombo->Enable();
+		pRegionCombo->Enable();
 		pIncludeBorderCheck->Enable();
+		pRegionSelectPanel->Enable();
 		pOKButton->Enable();
 		pCancelButton->Enable();
 	}
