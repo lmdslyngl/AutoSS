@@ -100,12 +100,25 @@ private:
 	void OnRegisterHotkey(wxCommandEvent &ev);
 	void OnKeyDown(wxKeyEvent &ev);
 	
+	void OnRegionComboChanged(wxCommandEvent &ev);
+	
+	wxPanel *CreateRegionSelectPanel(
+		const std::shared_ptr<Config> &pInitConf);
+	
 private:
 	wxTextCtrl *pSavePathText;
 	wxButton *pSavePathRefButton;
 	wxTextCtrl *pWaitTimeText;
 	wxComboBox *pCaptureCombo;
+	wxComboBox *pRegionCombo;
+	wxPanel *pWindowBorderPanel;
 	wxCheckBox *pIncludeBorderCheck;
+	wxPanel *pRegionSelectPanel;
+	wxTextCtrl *pRegionXText;
+	wxTextCtrl *pRegionYText;
+	wxTextCtrl *pRegionWidthText;
+	wxTextCtrl *pRegionHeightText;
+	wxButton *pRegionSelectBtn;
 	wxButton *pHotkeyRegButton;
 	wxTextCtrl *pHotkeyText;
 	bool RegisteringHotkey;

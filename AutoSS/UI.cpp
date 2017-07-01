@@ -217,21 +217,58 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pDialogSizer->Add(pCaptureSizer);
 	pDialogSizer->AddSpacer(10);
 	
+	//
+	// 撮影領域
+	//
+	
+	wxBoxSizer *pRegionComboSizer = new wxBoxSizer(wxHORIZONTAL);
+	pRegionComboSizer->AddSpacer(10);
+	
+	wxStaticText *pRegionLabel = new wxStaticText(this, wxID_ANY, L"撮影範囲");
+	pRegionComboSizer->Add(pRegionLabel, wxSizerFlags().CenterVertical());
+	pRegionComboSizer->AddSpacer(5);
+	
+	pRegionCombo = new wxComboBox(
+		this, wxID_ANY, wxEmptyString,
+		wxDefaultPosition, wxDefaultSize,
+		0, nullptr, wxCB_READONLY);
+	pRegionCombo->Bind(wxEVT_COMBOBOX, &ConfigFrame::OnRegionComboChanged, this);
+	pRegionCombo->Append(L"アクティブウィンドウ");
+	pRegionCombo->Append(L"指定ウィンドウ");
+	pRegionCombo->Append(L"選択範囲");
+	pRegionCombo->Append(L"フルスクリーン");
+	pRegionCombo->Select(0);
+	pRegionComboSizer->Add(pRegionCombo, wxSizerFlags().CenterVertical());
+	pRegionComboSizer->AddSpacer(10);
+	
+	pDialogSizer->Add(pRegionComboSizer);
+	pDialogSizer->AddSpacer(10);
 	
 	//
-	// ウィンドウの枠を含める
+	// ウィンドウ枠パネル
 	//
+	
+	pWindowBorderPanel = new wxPanel(this, wxID_ANY);
 	
 	wxBoxSizer *pBorderSizer = new wxBoxSizer(wxHORIZONTAL);
+	pWindowBorderPanel->SetSizer(pBorderSizer);
+	
 	pBorderSizer->AddSpacer(10);
 	
-	pIncludeBorderCheck = new wxCheckBox(this, wxID_ANY, L"ウィンドウの枠を含める");
+	pIncludeBorderCheck = new wxCheckBox(pWindowBorderPanel, wxID_ANY, L"ウィンドウの枠を含める");
 	pIncludeBorderCheck->SetValue(pInitConf->IncludeBorder);
 	pBorderSizer->Add(pIncludeBorderCheck);
 	
-	pDialogSizer->Add(pBorderSizer);
+	
+	pDialogSizer->Add(pWindowBorderPanel);
 	pDialogSizer->AddSpacer(10);
 	
+	
+	//
+	// 範囲選択パネル
+	//
+	pRegionSelectPanel = CreateRegionSelectPanel(pInitConf);
+	pDialogSizer->Add(pRegionSelectPanel);
 	
 	//
 	// ホットキー
@@ -285,6 +322,87 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	
 }
 
+wxPanel *ConfigFrame::CreateRegionSelectPanel(
+	const std::shared_ptr<Config> &pInitConf)
+{
+	
+	wxPanel *pRegionSelectPanel = new wxPanel(this, wxID_ANY);
+	
+	// X
+	wxStaticText *pRegionXLabel = new wxStaticText(
+		pRegionSelectPanel, wxID_ANY, L"X");
+	pRegionXText = new wxTextCtrl(
+		pRegionSelectPanel, wxID_ANY,
+		std::to_string(pInitConf->RegionX),
+		wxDefaultPosition, wxSize(50, -1));
+	
+	// Y
+	wxStaticText *pRegionYLabel = new wxStaticText(
+		pRegionSelectPanel, wxID_ANY, L"Y");
+	pRegionYText = new wxTextCtrl(
+		pRegionSelectPanel, wxID_ANY,
+		std::to_string(pInitConf->RegionY),
+		wxDefaultPosition, wxSize(50, -1));
+	
+	// Width
+	wxStaticText *pRegionWLabel = new wxStaticText(
+		pRegionSelectPanel, wxID_ANY, L"Width");
+	pRegionWidthText = new wxTextCtrl(
+		pRegionSelectPanel, wxID_ANY,
+		std::to_string(pInitConf->RegionWidth),
+		wxDefaultPosition, wxSize(50, -1));
+	
+	// Height
+	wxStaticText *pRegionHLabel = new wxStaticText(
+		pRegionSelectPanel, wxID_ANY, L"Height");
+	pRegionHeightText = new wxTextCtrl(
+		pRegionSelectPanel, wxID_ANY,
+		std::to_string(pInitConf->RegionHeight),
+		wxDefaultPosition, wxSize(50, -1));
+	
+	// 範囲選択ボタン
+	pRegionSelectBtn = new wxButton(
+		pRegionSelectPanel, wxID_ANY, L"マウスで選択");
+	
+	//
+	// 配置
+	//
+	wxStaticBoxSizer *pPanelHSizer = new wxStaticBoxSizer(
+		wxHORIZONTAL, pRegionSelectPanel, L"選択範囲");
+	{
+		wxBoxSizer *pVSizer = new wxBoxSizer(wxVERTICAL);
+		pPanelHSizer->Add(pVSizer);
+		{
+			wxFlexGridSizer *pRegionSelectSizer = new wxFlexGridSizer(4, 5, 5);
+			pVSizer->Add(pRegionSelectSizer);
+			{
+				pRegionSelectSizer->Add(pRegionXLabel,
+					wxSizerFlags().CenterVertical().Right());
+				pRegionSelectSizer->Add(pRegionXText);
+				
+				pRegionSelectSizer->Add(pRegionYLabel,
+					wxSizerFlags().CenterVertical().Right());
+				pRegionSelectSizer->Add(pRegionYText);
+				
+				pRegionSelectSizer->Add(pRegionWLabel,
+					wxSizerFlags().CenterVertical().Right());
+				pRegionSelectSizer->Add(pRegionWidthText);
+				
+				pRegionSelectSizer->Add(pRegionHLabel,
+					wxSizerFlags().CenterVertical().Right());
+				pRegionSelectSizer->Add(pRegionHeightText);
+			}
+			pVSizer->AddSpacer(5);
+			pVSizer->Add(pRegionSelectBtn, wxSizerFlags().Right());
+		}
+	}
+	
+	pRegionSelectPanel->SetSizer(pPanelHSizer);
+	
+	return pRegionSelectPanel;
+	
+}
+
 std::shared_ptr<Config> ConfigFrame::GetConfig() const {
 	auto pConf = std::make_shared<Config>();
 	pConf->SavePath = pSavePathText->GetValue();
@@ -295,6 +413,11 @@ std::shared_ptr<Config> ConfigFrame::GetConfig() const {
 	pConf->HotkeyCodeRaw = HotkeyCodeRaw;
 	pConf->HotkeyMod = HotkeyMod;
 	pConf->ImageFormat = IMGFMT_BMP;
+	pConf->RegionMode = (CAPTURE_REGION)pRegionCombo->GetSelection();
+	pConf->RegionX = std::stoi(pRegionXText->GetValue().ToStdString());
+	pConf->RegionY = std::stoi(pRegionYText->GetValue().ToStdString());
+	pConf->RegionWidth = std::stoi(pRegionWidthText->GetValue().ToStdString());
+	pConf->RegionHeight = std::stoi(pRegionHeightText->GetValue().ToStdString());
 	return pConf;
 }
 
@@ -363,6 +486,23 @@ void ConfigFrame::OnKeyDown(wxKeyEvent &ev) {
 	} else {
 		// ホットキー登録中じゃない
 		ev.DoAllowNextEvent();
+	}
+	
+}
+
+void ConfigFrame::OnRegionComboChanged(wxCommandEvent &ev) {
+	CAPTURE_REGION region = (CAPTURE_REGION)pRegionCombo->GetSelection();
+	
+	if( region == CAPTURE_REGION_ACTIVE_WINDOW || region == CAPTURE_REGION_SELECTED_WINDOW ) {
+		pIncludeBorderCheck->Enable();
+	} else {
+		pIncludeBorderCheck->Disable();
+	}
+	
+	if( region == CAPTURE_REGION_SELECTED_REGION ) {
+		pRegionSelectPanel->Enable();
+	} else {
+		pRegionSelectPanel->Disable();
 	}
 	
 }

@@ -20,6 +20,16 @@ enum IMAGE_FORMAT {
 };
 
 /*
+ * 撮影範囲
+*/
+enum CAPTURE_REGION {
+	CAPTURE_REGION_ACTIVE_WINDOW,
+	CAPTURE_REGION_SELECTED_WINDOW,
+	CAPTURE_REGION_SELECTED_REGION,
+	CAPTURE_REGION_FULLSCREEN
+};
+
+/*
  * 設定クラス
 */
 class Config {
@@ -47,6 +57,9 @@ public:
 	int HotkeyCode;
 	int HotkeyCodeRaw;
 	IMAGE_FORMAT ImageFormat;
+	CAPTURE_REGION RegionMode;
+	int RegionX, RegionY;
+	int RegionWidth, RegionHeight;
 	
 private:
 	// 設定ファイルをキーと値に切り分ける
