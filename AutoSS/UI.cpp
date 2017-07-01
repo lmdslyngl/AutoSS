@@ -138,70 +138,53 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	// ホットキー登録用キーイベントフック
 	Bind(wxEVT_CHAR_HOOK, &ConfigFrame::OnKeyDown, this);
 	
-	wxBoxSizer *pDialogSizer = new wxBoxSizer(wxVERTICAL);
-	pDialogSizer->AddSpacer(10);
+	wxFlexGridSizer *pDialogSizer = new wxFlexGridSizer(2, wxSize(5, 5));
+	pDialogSizer->AddSpacer(0);
+	pDialogSizer->AddStretchSpacer();
 	SetSizer(pDialogSizer);
 	
 	//
 	// SS保存先
 	//
 	
-	wxBoxSizer *pSavePathSizer = new wxBoxSizer(wxHORIZONTAL);
-	pSavePathSizer->AddSpacer(10);
-	
 	wxStaticText *pSavePathLabel = new wxStaticText(this, wxID_ANY, L"SS保存先");
-	pSavePathSizer->Add(pSavePathLabel, wxSizerFlags().CenterVertical());
-	pSavePathSizer->AddSpacer(5);
 	
 	pSavePathText = new wxTextCtrl(this, wxID_ANY, pInitConf->SavePath);
-	pSavePathSizer->Add(pSavePathText, wxSizerFlags(1).CenterVertical());
-	pSavePathSizer->AddSpacer(5);
 	
 	pSavePathRefButton = new wxButton(
 		this, wxID_ANY, L"参照",
 		wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	pSavePathRefButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnSavePathRef, this);
+	
+	pDialogSizer->Add(pSavePathLabel, wxSizerFlags().CenterVertical().Right());
+	
+	wxBoxSizer *pSavePathSizer = new wxBoxSizer(wxHORIZONTAL);
+	pSavePathSizer->Add(pSavePathText, wxSizerFlags(1).CenterVertical());
+	pSavePathSizer->AddSpacer(5);
 	pSavePathSizer->Add(pSavePathRefButton, wxSizerFlags().CenterVertical());
-	
-	pSavePathSizer->AddSpacer(10);
-	
 	pDialogSizer->Add(pSavePathSizer, wxSizerFlags().Expand());
-	pDialogSizer->AddSpacer(10);
 	
 	
 	//
 	// 撮影間隔
 	//
 	
-	wxBoxSizer *pWaitTimeSizer = new wxBoxSizer(wxHORIZONTAL);
-	pWaitTimeSizer->AddSpacer(10);
-	
 	wxStaticText *pWaitTimeLabel = new wxStaticText(this, wxID_ANY, L"撮影間隔（ミリ秒）");
-	pWaitTimeSizer->Add(pWaitTimeLabel, wxSizerFlags().CenterVertical());
-	pWaitTimeSizer->AddSpacer(5);
 	
 	wxIntegerValidator<unsigned int> intValid(nullptr);
 	pWaitTimeText = new wxTextCtrl(this, wxID_ANY,
 		std::to_string(pInitConf->WaitTime),
 		wxDefaultPosition, wxSize(50, -1), 0, intValid);
-	pWaitTimeSizer->Add(pWaitTimeText, wxSizerFlags().CenterVertical());
 	
-	pWaitTimeSizer->AddSpacer(10);
-	
-	pDialogSizer->Add(pWaitTimeSizer);
-	pDialogSizer->AddSpacer(10);
+	pDialogSizer->Add(pWaitTimeLabel, wxSizerFlags().CenterVertical().Right());
+	pDialogSizer->Add(pWaitTimeText, wxSizerFlags().CenterVertical());
 	
 	
 	//
 	// キャプチャ方式
 	//
 	
-	wxBoxSizer *pCaptureSizer = new wxBoxSizer(wxHORIZONTAL);
-	pCaptureSizer->AddSpacer(10);
-	
 	wxStaticText *pCaptureLabel = new wxStaticText(this, wxID_ANY, L"キャプチャ方式");
-	pCaptureSizer->Add(pCaptureLabel, wxSizerFlags().CenterVertical());
-	pCaptureSizer->AddSpacer(5);
 	
 	pCaptureCombo = new wxComboBox(
 		this, wxID_ANY, wxEmptyString,
@@ -210,23 +193,16 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pCaptureCombo->Append(L"BitBlt");
 	pCaptureCombo->Append(L"Desktop Duplication API");
 	pCaptureCombo->Select(pInitConf->CaptureMethod);
-	pCaptureSizer->Add(pCaptureCombo, wxSizerFlags().CenterVertical());
 	
-	pCaptureSizer->AddSpacer(10);
+	pDialogSizer->Add(pCaptureLabel, wxSizerFlags().CenterVertical().Right());
+	pDialogSizer->Add(pCaptureCombo, wxSizerFlags().CenterVertical());
 	
-	pDialogSizer->Add(pCaptureSizer);
-	pDialogSizer->AddSpacer(10);
 	
 	//
 	// 撮影領域
 	//
 	
-	wxBoxSizer *pRegionComboSizer = new wxBoxSizer(wxHORIZONTAL);
-	pRegionComboSizer->AddSpacer(10);
-	
 	wxStaticText *pRegionLabel = new wxStaticText(this, wxID_ANY, L"撮影範囲");
-	pRegionComboSizer->Add(pRegionLabel, wxSizerFlags().CenterVertical());
-	pRegionComboSizer->AddSpacer(5);
 	
 	pRegionCombo = new wxComboBox(
 		this, wxID_ANY, wxEmptyString,
@@ -238,36 +214,26 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pRegionCombo->Append(L"選択範囲");
 	pRegionCombo->Append(L"フルスクリーン");
 	pRegionCombo->Select(0);
-	pRegionComboSizer->Add(pRegionCombo, wxSizerFlags().CenterVertical());
-	pRegionComboSizer->AddSpacer(10);
 	
-	pDialogSizer->Add(pRegionComboSizer);
-	pDialogSizer->AddSpacer(10);
+	pDialogSizer->Add(pRegionLabel, wxSizerFlags().CenterVertical().Right());
+	pDialogSizer->Add(pRegionCombo, wxSizerFlags().CenterVertical());
 	
 	//
 	// ウィンドウ枠パネル
 	//
 	
-	pWindowBorderPanel = new wxPanel(this, wxID_ANY);
-	
-	wxBoxSizer *pBorderSizer = new wxBoxSizer(wxHORIZONTAL);
-	pWindowBorderPanel->SetSizer(pBorderSizer);
-	
-	pBorderSizer->AddSpacer(10);
-	
-	pIncludeBorderCheck = new wxCheckBox(pWindowBorderPanel, wxID_ANY, L"ウィンドウの枠を含める");
+	pIncludeBorderCheck = new wxCheckBox(this, wxID_ANY, L"ウィンドウの枠を含める");
 	pIncludeBorderCheck->SetValue(pInitConf->IncludeBorder);
-	pBorderSizer->Add(pIncludeBorderCheck);
 	
-	
-	pDialogSizer->Add(pWindowBorderPanel);
-	pDialogSizer->AddSpacer(10);
+	pDialogSizer->AddStretchSpacer();
+	pDialogSizer->Add(pIncludeBorderCheck);
 	
 	
 	//
 	// 範囲選択パネル
 	//
 	pRegionSelectPanel = CreateRegionSelectPanel(pInitConf);
+	pDialogSizer->AddStretchSpacer();
 	pDialogSizer->Add(pRegionSelectPanel);
 	
 	//
@@ -278,33 +244,27 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	HotkeyCode = pInitConf->HotkeyCode;
 	HotkeyCodeRaw = pInitConf->HotkeyCodeRaw;
 	
-	wxBoxSizer *pHotkeySizer = new wxBoxSizer(wxHORIZONTAL);
-	pHotkeySizer->AddSpacer(10);
-	
 	wxStaticText *pHotkeyLabel = new wxStaticText(this, wxID_ANY, L"ショートカット");
-	pHotkeySizer->Add(pHotkeyLabel, wxSizerFlags().CenterVertical());
-	pHotkeySizer->AddSpacer(5);
 	
 	pHotkeyText = new wxTextCtrl(this, wxID_ANY, L"",
 		wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	pHotkeyText->SetValue(wxAcceleratorEntry(HotkeyMod, HotkeyCode).ToString());
-	pHotkeySizer->Add(pHotkeyText, wxSizerFlags(1).CenterVertical());
-	pHotkeySizer->AddSpacer(5);
 	
 	pHotkeyRegButton = new wxButton(this, wxID_ANY, L"登録開始");
 	pHotkeyRegButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnRegisterHotkey, this);
-	pHotkeySizer->Add(pHotkeyRegButton, wxSizerFlags().CenterVertical());
-	pHotkeySizer->AddSpacer(10);
 	
+	pDialogSizer->Add(pHotkeyLabel, wxSizerFlags().CenterVertical().Right());
+	
+	wxBoxSizer *pHotkeySizer = new wxBoxSizer(wxHORIZONTAL);
+	pHotkeySizer->Add(pHotkeyText, wxSizerFlags().CenterVertical());
+	pHotkeySizer->Add(pHotkeyRegButton, wxSizerFlags().CenterVertical());
 	pDialogSizer->Add(pHotkeySizer);
-	pDialogSizer->AddSpacer(10);
 	
 	//
 	// OK，キャンセル
 	//
 	
 	wxBoxSizer *pOKCancelSizer = new wxBoxSizer(wxHORIZONTAL);
-	pOKCancelSizer->AddSpacer(10);
 	
 	pOKButton = new wxButton(this, wxID_ANY, L"OK");
 	pOKButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnOK, this);
@@ -313,10 +273,12 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pCancelButton = new wxButton(this, wxID_ANY, L"キャンセル");
 	pCancelButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnCancel, this);
 	pOKCancelSizer->Add(pCancelButton);
-	pOKCancelSizer->AddSpacer(10);
 	
+	pDialogSizer->AddStretchSpacer();
 	pDialogSizer->Add(pOKCancelSizer, wxSizerFlags().Right());
-	pDialogSizer->AddSpacer(10);
+	
+	pDialogSizer->AddSpacer(5);
+	pDialogSizer->AddStretchSpacer();
 	
 	Fit();
 	

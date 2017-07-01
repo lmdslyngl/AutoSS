@@ -111,7 +111,6 @@ private:
 	wxTextCtrl *pWaitTimeText;
 	wxComboBox *pCaptureCombo;
 	wxComboBox *pRegionCombo;
-	wxPanel *pWindowBorderPanel;
 	wxCheckBox *pIncludeBorderCheck;
 	wxPanel *pRegionSelectPanel;
 	wxTextCtrl *pRegionXText;
