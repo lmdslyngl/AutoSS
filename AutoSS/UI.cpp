@@ -213,7 +213,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pRegionCombo->Append(L"指定ウィンドウ");
 	pRegionCombo->Append(L"選択範囲");
 	pRegionCombo->Append(L"フルスクリーン");
-	pRegionCombo->Select(0);
+	pRegionCombo->Select(pInitConf->RegionMode);
 	
 	pDialogSizer->Add(pRegionLabel, wxSizerFlags().CenterVertical().Right());
 	pDialogSizer->Add(pRegionCombo, wxSizerFlags().CenterVertical());
