@@ -9,14 +9,14 @@ ScreenShot2::ScreenShot2(
 	std::shared_ptr<ImageWriterBase> &pWriter,
 	const std::wstring &savePathFormat,
 	int waitTimeMillisec,
-	TRIMMING_MODE trimMode)
+	const std::shared_ptr<CaptureRegionBase> &pRegion)
 	: ScreenShotBase()
 {
 	
 	this->SetCapturer(pCap);
 	this->SetWriter(pWriter);
 	this->SetSavePathFormat(savePathFormat);
-	this->SetTrimmingMode(trimMode);
+	this->SetCaptureRegion(pRegion);
 	
 	pTimer = std::make_unique<TimerExec>(
 		[this](void *ptr) { this->TakeSSFunc(ptr); },
@@ -46,9 +46,8 @@ void ScreenShot2::Stop() {
 
 // スクリーンショット撮影
 void ScreenShot2::TakeSSFunc(void *ptr) {
-	HWND hCaptureWindow = GetForegroundWindow();
-	RECT windowRect = GetWindowRegion(hCaptureWindow);
-	windowRect = ClampOutOfRegion(windowRect);
+	RECT windowRect;
+	pCapRegion->GetCaptureRegionRect(&windowRect);
 	
 	unsigned int buflen = pCap->CalcNecessaryBufferLength(&windowRect);
 	vecImgBuffer.resize(buflen);

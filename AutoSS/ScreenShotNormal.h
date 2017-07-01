@@ -13,7 +13,7 @@ public:
 		std::shared_ptr<ImageWriterBase> &pWriter,
 		const std::wstring &savePathFormat,
 		int waitTimeMillisec,
-		TRIMMING_MODE trimMode);
+		const std::shared_ptr<CaptureRegionBase> &pRegion);
 	
 	// 連写開始
 	virtual void Start();

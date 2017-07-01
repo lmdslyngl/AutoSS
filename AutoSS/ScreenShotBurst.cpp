@@ -6,7 +6,7 @@ ScreenShotBurst::ScreenShotBurst(
 	std::shared_ptr<CaptureBase> &pCap,
 	std::shared_ptr<ImageWriterBase> &pWriter,
 	const std::wstring &savePathFormat,
-	TRIMMING_MODE trimMode,
+	const std::shared_ptr<CaptureRegionBase> &pRegion,
 	unsigned int numCaptureImages)
 	: ScreenShotBase()
 {
@@ -14,7 +14,7 @@ ScreenShotBurst::ScreenShotBurst(
 	this->SetCapturer(pCap);
 	this->SetWriter(pWriter);
 	this->SetSavePathFormat(savePathFormat);
-	this->SetTrimmingMode(trimMode);
+	this->SetCaptureRegion(pRegion);
 	this->NumCaptureImages = numCaptureImages;
 	
 }
@@ -50,9 +50,8 @@ void ScreenShotBurst::TakeSSFunc() {
 	for( int i = 0; i < NumCaptureImages; i++ ) {
 		if( StopFlag ) break;
 		
-		HWND hCaptureWindow = GetForegroundWindow();
-		RECT windowRect = GetWindowRegion(hCaptureWindow);
-		windowRect = ClampOutOfRegion(windowRect);
+		RECT windowRect;
+		pCapRegion->GetCaptureRegionRect(&windowRect);
 		
 		unsigned int buflen = pCap->CalcNecessaryBufferLength(&windowRect);
 		if( bufcursor == nullptr ) {

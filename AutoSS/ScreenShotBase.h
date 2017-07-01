@@ -7,24 +7,19 @@
 
 #include "CaptureBase.h"
 #include "ImageWriterBase.h"
-
-/*
- * ウィンドウ部分のトリミング方法を設定
-*/
-enum TRIMMING_MODE {
-	TRIMMING_WINDOW_RECT,
-	TRIMMING_WINDOW_RECT_DWM,
-	TRIMMING_CLIENT_RECT
-};
+#include "CaptureRegion.h"
 
 /*
  * スクリーンショット基底クラス
 */
 class ScreenShotBase {
 public:
-	
-	ScreenShotBase();
-	virtual ~ScreenShotBase();
+
+	ScreenShotBase() {
+		this->TakenCount = 0;
+		this->CapturedFPS = 0.0;
+	}
+	virtual ~ScreenShotBase() = default;
 	
 	// 撮影開始
 	virtual void Start() = 0;
@@ -62,16 +57,6 @@ public:
 		return SavePathFormat;
 	}
 	
-	// トリミング設定
-	void SetTrimmingMode(TRIMMING_MODE mode) {
-		this->TrimMode = mode;
-	}
-	
-	// トリミング設定を取得
-	TRIMMING_MODE GetTrimmingMode() const {
-		return TrimMode;
-	}
-	
 	// 撮影枚数を取得
 	int GetTakenCount() const {
 		return TakenCount;
@@ -87,25 +72,24 @@ public:
 		return CapturedFPS;
 	}
 	
-protected:
+	// キャプチャ領域を設定
+	void SetCaptureRegion(const std::shared_ptr<CaptureRegionBase> &pRegion) {
+		this->pCapRegion = pRegion;
+	}
 	
-	// ウィンドウの大きさを取得
-	void GetWindowSize(HWND hWindow, int *pOutWidth, int *pOutHeight) const;
-	
-	// トリミングするの領域を取得
-	RECT GetWindowRegion(HWND hCaptureWindow) const;
-	
-	// 画面外の領域をクランプする
-	RECT ClampOutOfRegion(const RECT &region) const;
+	// キャプチャ領域を取得
+	const std::shared_ptr<CaptureRegionBase> &GetCaptureRetion() const {
+		return pCapRegion;
+	}
 	
 protected:
 	int DesktopWidth, DesktopHeight;
 	std::shared_ptr<CaptureBase> pCap;
 	std::shared_ptr<ImageWriterBase> pWriter;
 	std::wstring SavePathFormat;
-	TRIMMING_MODE TrimMode;
 	int TakenCount;
 	std::function<void()> OnFinishedFunc;
 	double CapturedFPS;
+	std::shared_ptr<CaptureRegionBase> pCapRegion;
 };
 

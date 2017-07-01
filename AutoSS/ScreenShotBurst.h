@@ -12,7 +12,7 @@ public:
 		std::shared_ptr<CaptureBase> &pCap,
 		std::shared_ptr<ImageWriterBase> &pWriter,
 		const std::wstring &savePathFormat,
-		TRIMMING_MODE trimMode,
+		const std::shared_ptr<CaptureRegionBase> &pRegion,
 		unsigned int numCaptureImages);
 	
 	virtual ~ScreenShotBurst();

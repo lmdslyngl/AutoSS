@@ -18,6 +18,7 @@
 #include "ImageWriterPPM.h"
 #include "ScreenShotNormal.h"
 #include "ScreenShotBurst.h"
+#include "CaptureRegion.h"
 #include "Config.h"
 
 #pragma comment(lib, "dwmapi.lib")
@@ -179,12 +180,22 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 		return nullptr;
 	}
 	
-	// ウィンドウのトリミング方法
-	TRIMMING_MODE trimmode;
-	if( pConf->IncludeBorder ) {
-		trimmode = TRIMMING_WINDOW_RECT;
-	} else {
-		trimmode = TRIMMING_CLIENT_RECT;;
+	// 撮影範囲
+	std::shared_ptr<CaptureRegionBase> pCapRegion;
+	if( pConf->RegionMode == CAPTURE_REGION_ACTIVE_WINDOW ) {
+		pCapRegion = std::make_shared<CaptureRegionActiveWindow>(
+			pConf->IncludeBorder);
+	} else if( pConf->RegionMode == CAPTURE_REGION_SELECTED_WINDOW ) {
+		wxMessageBox(
+			L"指定ウィンドウ連写はまだ実装されていません", L"AutoSS",
+			wxOK | wxICON_ERROR);
+		return false;
+	} else if( pConf->RegionMode == CAPTURE_REGION_SELECTED_REGION ) {
+		pCapRegion = std::make_shared<CaptureRegionSelectedRegion>(
+			pConf->RegionX, pConf->RegionY,
+			pConf->RegionWidth, pConf->RegionHeight);
+	} else if( pConf->RegionMode == CAPTURE_REGION_FULLSCREEN ) {
+		pCapRegion = std::make_shared<CaptureRegionFullscreen>();
 	}
 	
 	// スクリーンショットクラス
@@ -192,11 +203,11 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 	if( burstMode ) {
 		pSS = std::make_unique<ScreenShotBurst>(
 			pCap, pImageWriter, L"",
-			trimmode, 100);
+			pCapRegion, 100);
 	} else {
 		pSS = std::make_unique<ScreenShot2>(
 			pCap, pImageWriter, L"",
-			pConf->WaitTime, trimmode);
+			pConf->WaitTime, pCapRegion);
 	}
 	pSS->SetOnFinishedFunc([this]() { this->OnCaptureFinished(); });
 	
