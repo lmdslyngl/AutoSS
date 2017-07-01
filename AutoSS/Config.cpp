@@ -19,6 +19,11 @@ void Config::Load(const std::wstring &conffile) {
 	HotkeyCode = std::stoi(mapKeyValues[L"HotkeyCode"]);
 	HotkeyCodeRaw = std::stoi(mapKeyValues[L"HotkeyCodeRaw"]);
 	ImageFormat = (IMAGE_FORMAT)std::stoi(mapKeyValues[L"ImageFormat"]);
+	RegionMode = (CAPTURE_REGION)std::stoi(mapKeyValues[L"RegionMode"]);
+	RegionX = std::stoi(mapKeyValues[L"RegionX"]);
+	RegionY = std::stoi(mapKeyValues[L"RegionY"]);
+	RegionWidth = std::stoi(mapKeyValues[L"RegionWidth"]);
+	RegionHeight = std::stoi(mapKeyValues[L"RegionHeight"]);
 	
 }
 
@@ -32,6 +37,11 @@ void Config::Save(const std::wstring &conffile) {
 	ss << L"HotkeyCode=" << std::to_wstring(HotkeyCode) << L"\n";
 	ss << L"HotkeyCodeRaw=" << std::to_wstring(HotkeyCodeRaw) << L"\n";
 	ss << L"ImageFormat=" << std::to_wstring(ImageFormat) << L"\n";
+	ss << L"RegionMode=" << std::to_wstring(RegionMode) << L"\n";
+	ss << L"RegionX=" << std::to_wstring(RegionX) << L"\n";
+	ss << L"RegionY=" << std::to_wstring(RegionY) << L"\n";
+	ss << L"RegionWidth=" << std::to_wstring(RegionWidth) << L"\n";
+	ss << L"RegionHeight=" << std::to_wstring(RegionHeight) << L"\n";
 	WriteUtf8File(conffile, ss.str());
 }
 
