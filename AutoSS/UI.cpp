@@ -2,6 +2,7 @@
 #include "UI.h"
 #include <wx/valnum.h>
 #include <wx/appprogress.h>
+#include "BitBltCapture.h"
 
 /*
  * AutoSSウィンドウ
@@ -476,6 +477,157 @@ void ConfigFrame::UpdateRegionSelectionEnabling() {
 	} else {
 		pRegionSelectPanel->Disable();
 	}
+	
+}
+
+void ConfigFrame::OnRegionSelect(wxCommandEvent &ev) {
+	int startX, startY, endX, endY, width, height;
+	startX = std::stoi(pRegionXText->GetValue().ToStdString());
+	startY = std::stoi(pRegionYText->GetValue().ToStdString());
+	width = std::stoi(pRegionWidthText->GetValue().ToStdString());
+	height = std::stoi(pRegionHeightText->GetValue().ToStdString());
+	endX = startX + width;
+	endY = startY + height;
+	pRgnSelWnd->SetRegion(startX, startY, endX, endY);
+	
+	pRgnSelWnd->UpdateScreenShot();
+	pRgnSelWnd->Show();
+	
+}
+
+void ConfigFrame::OnRegionSelectFinished() {
+	int startX, startY, endX, endY;
+	pRgnSelWnd->GetRegion(&startX, &startY, &endX, &endY);
+	pRegionXText->SetValue(std::to_string(startX));
+	pRegionYText->SetValue(std::to_string(startY));
+	pRegionWidthText->SetValue(std::to_string(endX - startX));
+	pRegionHeightText->SetValue(std::to_string(endY - startY));
+}
+
+
+/*
+ * 範囲選択ウィンドウ
+*/
+RegionSelectWindow::RegionSelectWindow()
+	: wxFrame(nullptr, wxID_ANY, L"",
+		wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
+{
+	
+	pBitmapBuffer = nullptr;
+	BitmapBufferLen = 0;
+	RegionStartX = 0;
+	RegionStartY = 0;
+	RegionEndX = 0;
+	RegionEndY = 0;
+	IsMousePressingFlag = false;
+	
+	// デスクトップのサイズ
+	DesktopWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+	DesktopHeight = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
+	
+	// バックバッファ
+	pBackbufferBitmap = std::make_unique<wxBitmap>(
+		DesktopWidth, DesktopHeight);
+	
+	// イベントハンドラ
+	Bind(wxEVT_PAINT, &RegionSelectWindow::OnPaint, this);
+	Bind(wxEVT_LEFT_DOWN, &RegionSelectWindow::OnMousePressed, this);
+	Bind(wxEVT_LEFT_UP, &RegionSelectWindow::OnMouseReleased, this);
+	Bind(wxEVT_MOTION, &RegionSelectWindow::OnMouseMoved, this);
+	
+	SetSize(wxSize(DesktopWidth, DesktopHeight));
+	
+}
+
+RegionSelectWindow::~RegionSelectWindow() {
+	if( pBitmapBuffer != nullptr ) {
+		free(pBitmapBuffer);
+		pBitmapBuffer = nullptr;
+		BitmapBufferLen = 0;
+	}
+}
+
+void RegionSelectWindow::UpdateScreenShot() {
+	// デスクトップの画像のビットマップを作成
+	wxImage image(DesktopWidth, DesktopHeight);
+	CaptureDesktop(&image);
+	pDesktopBitmap = std::make_unique<wxBitmap>(image);
+}
+
+void RegionSelectWindow::OnPaint(wxPaintEvent &ev) {
+	DrawRegion(wxPaintDC(this));
+}
+
+void RegionSelectWindow::OnMousePressed(wxMouseEvent &ev) {
+	IsMousePressingFlag = true;
+	RegionStartX = ev.GetX();
+	RegionStartY = ev.GetY();
+	RegionEndX = RegionStartX;
+	RegionEndY = RegionStartY;
+	DrawRegion(wxClientDC(this));
+}
+
+void RegionSelectWindow::OnMouseReleased(wxMouseEvent &ev) {
+	IsMousePressingFlag = false;
+	RegionEndX = ev.GetX();
+	RegionEndY = ev.GetY();
+	DrawRegion(wxClientDC(this));
+	if( RegionFinishedCallbackFunc ) RegionFinishedCallbackFunc();
+	Hide();
+}
+
+void RegionSelectWindow::OnMouseMoved(wxMouseEvent &ev) {
+	if( IsMousePressingFlag ) {
+		RegionEndX = ev.GetX();
+		RegionEndY = ev.GetY();
+		DrawRegion(wxClientDC(this));
+	}
+}
+
+// 選択範囲を描画
+void RegionSelectWindow::DrawRegion(wxDC &dc) {
+	wxMemoryDC backDC(*pBackbufferBitmap);
+	backDC.DrawBitmap(*pDesktopBitmap, 0, 0);
+	backDC.SetPen(wxPen(wxColour(255, 128, 0), 2));
+	backDC.SetBrush(wxBrush(wxColour(0, 0, 0), wxBRUSHSTYLE_TRANSPARENT));
+	backDC.DrawRectangle(RegionStartX, RegionStartY,
+		RegionEndX - RegionStartX,
+		RegionEndY - RegionStartY);
+	dc.Blit(
+		wxPoint(0, 0), wxSize(DesktopWidth, DesktopHeight),
+		&backDC, wxPoint(0, 0));
+}
+
+void RegionSelectWindow::CaptureDesktop(wxImage *pOutImage) {
+	HINSTANCE hInstance = GetModuleHandle(nullptr);
+	auto pCap = std::make_unique<BitBltCapture>();
+	pCap->Setup(hInstance, nullptr);
+	
+	RECT desktopRegion = {
+		0, 0,
+		wxSystemSettings::GetMetric(wxSYS_SCREEN_X),
+		wxSystemSettings::GetMetric(wxSYS_SCREEN_Y)
+	};
+	
+	BitmapBufferLen = pCap->CalcNecessaryBufferLength(&desktopRegion);
+	if( pBitmapBuffer == nullptr ) {
+		pBitmapBuffer = (unsigned char*)malloc(BitmapBufferLen);
+	}
+	
+	int capturedWidth, capturedHeight;
+	pCap->CaptureRegion(&desktopRegion,
+		pBitmapBuffer, BitmapBufferLen,
+		&capturedWidth, &capturedHeight);
+	
+	// BGR -> RGB
+	unsigned char *cursor = pBitmapBuffer;
+	unsigned char *end = pBitmapBuffer + BitmapBufferLen;
+	while( cursor != end ) {
+		std::swap(cursor[0], cursor[2]);
+		cursor += 3;
+	}
+	
+	pOutImage->SetData(pBitmapBuffer, true);
 	
 }
 
