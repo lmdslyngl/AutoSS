@@ -300,6 +300,8 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 {
 	
 	wxPanel *pRegionSelectPanel = new wxPanel(this, wxID_ANY);
+	wxIntegerValidator<int> regionValidator(nullptr);
+	regionValidator.SetMin(0);
 	
 	// X
 	wxStaticText *pRegionXLabel = new wxStaticText(
@@ -307,7 +309,7 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionXText = new wxTextCtrl(
 		pRegionSelectPanel, wxID_ANY,
 		std::to_string(pInitConf->RegionX),
-		wxDefaultPosition, wxSize(50, -1));
+		wxDefaultPosition, wxSize(50, -1), 0, regionValidator);
 	
 	// Y
 	wxStaticText *pRegionYLabel = new wxStaticText(
@@ -315,7 +317,7 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionYText = new wxTextCtrl(
 		pRegionSelectPanel, wxID_ANY,
 		std::to_string(pInitConf->RegionY),
-		wxDefaultPosition, wxSize(50, -1));
+		wxDefaultPosition, wxSize(50, -1), 0, regionValidator);
 	
 	// Width
 	wxStaticText *pRegionWLabel = new wxStaticText(
@@ -323,7 +325,7 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionWidthText = new wxTextCtrl(
 		pRegionSelectPanel, wxID_ANY,
 		std::to_string(pInitConf->RegionWidth),
-		wxDefaultPosition, wxSize(50, -1));
+		wxDefaultPosition, wxSize(50, -1), 0, regionValidator);
 	
 	// Height
 	wxStaticText *pRegionHLabel = new wxStaticText(
@@ -331,7 +333,7 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionHeightText = new wxTextCtrl(
 		pRegionSelectPanel, wxID_ANY,
 		std::to_string(pInitConf->RegionHeight),
-		wxDefaultPosition, wxSize(50, -1));
+		wxDefaultPosition, wxSize(50, -1), 0, regionValidator);
 	
 	// 範囲選択ボタン
 	pRegionSelectBtn = new wxButton(
