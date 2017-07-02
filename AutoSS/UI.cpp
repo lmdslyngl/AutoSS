@@ -512,10 +512,15 @@ void ConfigFrame::OnRegionSelectFinished() {
 	if( !pRgnSelWnd->IsCanceled() ) {
 		int startX, startY, endX, endY;
 		pRgnSelWnd->GetRegion(&startX, &startY, &endX, &endY);
+		
+		if( endX < startX ) std::swap(startX, endX);
+		if( endY < startY ) std::swap(startY, endY);
+		
 		pRegionXText->SetValue(std::to_string(startX));
 		pRegionYText->SetValue(std::to_string(startY));
 		pRegionWidthText->SetValue(std::to_string(endX - startX));
 		pRegionHeightText->SetValue(std::to_string(endY - startY));
+		
 	}
 }
 
