@@ -60,7 +60,6 @@ void AutoSSFrame::OnStart(wxCommandEvent &ev) {
 }
 
 void AutoSSFrame::OnConf(wxCommandEvent &ev) {
-	if( pConfigFrame ) pConfigFrame->Destroy();
 	pConfigFrame = new ConfigFrame(this, pConf);
 	
 	DisableCapture();
@@ -80,6 +79,9 @@ void AutoSSFrame::OnConf(wxCommandEvent &ev) {
 		// 今までのホットキーを登録
 		RegisterHotKey(HOTKEY_ID_START, pConf->HotkeyMod, pConf->HotkeyCodeRaw);
 	}
+	
+	pConfigFrame->Destroy();
+	pConfigFrame = nullptr;
 	
 }
 
@@ -138,6 +140,9 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	
 	// ホットキー登録用キーイベントフック
 	Bind(wxEVT_CHAR_HOOK, &ConfigFrame::OnKeyDown, this);
+	
+	// ダイアログを閉じだときのイベント
+	Bind(wxEVT_CLOSE_WINDOW, &ConfigFrame::OnClose, this);
 	
 	// 領域選択ウィンドウ
 	pRgnSelWnd = new RegionSelectWindow();
@@ -510,6 +515,12 @@ void ConfigFrame::OnRegionSelectFinished() {
 	pRegionYText->SetValue(std::to_string(startY));
 	pRegionWidthText->SetValue(std::to_string(endX - startX));
 	pRegionHeightText->SetValue(std::to_string(endY - startY));
+}
+
+void ConfigFrame::OnClose(wxCloseEvent &ev) {
+	CloseState = false;
+	pRgnSelWnd->Destroy();
+	Hide();
 }
 
 

@@ -106,6 +106,8 @@ private:
 	void OnRegionSelect(wxCommandEvent &ev);
 	void OnRegionSelectFinished();
 	
+	void OnClose(wxCloseEvent &ev);
+	
 	// 撮影範囲コンボボックスによって選択範囲の有効/無効を更新する
 	void UpdateRegionSelectionEnabling();
 	
