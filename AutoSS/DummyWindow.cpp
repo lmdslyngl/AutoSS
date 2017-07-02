@@ -38,7 +38,10 @@ bool DummyWindow::CreateDummyWindow(WNDPROC pFuncWndProc) {
 	winc.lpszMenuName	= NULL;
 	winc.lpszClassName	= L"DUMMYWINDOW";
 	
-	if( !RegisterClassEx(&winc) ) return false;
+	if( GetClassInfoEx(hInstance, L"DUMMYWINDOW", &winc) == 0 ) {
+		// DUMMYWINDOWクラスが登録されていなかったときのみ登録する
+		if( !RegisterClassEx(&winc) ) return false;
+	}
 	
 	hWindowDummy = CreateWindow(
 		L"DUMMYWINDOW", L"DummyWindow", 0,
