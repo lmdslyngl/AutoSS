@@ -181,6 +181,13 @@ private:
 	void OnMouseReleased(wxMouseEvent &ev);
 	void OnMouseMoved(wxMouseEvent &ev);
 	void OnMouseCanceled(wxMouseEvent &ev);
+	void OnFocusLoad(wxFocusEvent &ev);
+	
+	// 決定
+	void Decide();
+	
+	// キャンセル
+	void Cancel();
 	
 	// 選択範囲の説明を描画
 	void DrawInstruction(wxDC &dc);

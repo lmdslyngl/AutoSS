@@ -563,6 +563,7 @@ RegionSelectWindow::RegionSelectWindow()
 	Bind(wxEVT_LEFT_UP, &RegionSelectWindow::OnMouseReleased, this);
 	Bind(wxEVT_MOTION, &RegionSelectWindow::OnMouseMoved, this);
 	Bind(wxEVT_RIGHT_DOWN, &RegionSelectWindow::OnMouseCanceled, this);
+	Bind(wxEVT_KILL_FOCUS, &RegionSelectWindow::OnFocusLoad, this);
 	
 	SetSize(wxSize(DesktopWidth, DesktopHeight));
 	
@@ -601,9 +602,7 @@ void RegionSelectWindow::OnMouseReleased(wxMouseEvent &ev) {
 	RegionEndX = ev.GetX();
 	RegionEndY = ev.GetY();
 	DrawRegion(wxClientDC(this));
-	IsCanceledFlag = false;
-	if( RegionFinishedCallbackFunc ) RegionFinishedCallbackFunc();
-	Hide();
+	Decide();
 }
 
 void RegionSelectWindow::OnMouseMoved(wxMouseEvent &ev) {
@@ -616,6 +615,23 @@ void RegionSelectWindow::OnMouseMoved(wxMouseEvent &ev) {
 
 void RegionSelectWindow::OnMouseCanceled(wxMouseEvent &ev) {
 	IsMousePressingFlag = false;
+	Cancel();
+}
+
+void RegionSelectWindow::OnFocusLoad(wxFocusEvent &ev) {
+	IsMousePressingFlag = false;
+	Cancel();
+}
+
+// 決定
+void RegionSelectWindow::Decide() {
+	IsCanceledFlag = false;
+	if( RegionFinishedCallbackFunc ) RegionFinishedCallbackFunc();
+	Hide();
+}
+
+// キャンセル
+void RegionSelectWindow::Cancel() {
 	IsCanceledFlag = true;
 	if( RegionFinishedCallbackFunc ) RegionFinishedCallbackFunc();
 	Hide();
