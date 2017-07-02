@@ -60,6 +60,10 @@ public:
 		: CaptureRegionBase()
 	{
 		this->IsIncludeBorderFlag = includeBorder;
+		PrevRegion.left = 0;
+		PrevRegion.top = 0;
+		PrevRegion.right = DesktopWidth;
+		PrevRegion.bottom = DesktopHeight;
 	}
 	
 	virtual void GetCaptureRegionRect(RECT *pOutRegion);
@@ -70,6 +74,7 @@ public:
 	
 private:
 	bool IsIncludeBorderFlag;
+	RECT PrevRegion;
 };
 
 

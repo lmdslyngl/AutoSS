@@ -56,27 +56,34 @@ void CaptureRegionSelectedWindow::GetCaptureRegionRect(RECT *pOutRegion) {
 */
 void CaptureRegionActiveWindow::GetCaptureRegionRect(RECT *pOutRegion) {
 	HWND hCaptureWindow = GetForegroundWindow();
-	
-	if( IsIncludeBorder() ) {
-		GetWindowRect(hCaptureWindow, pOutRegion);
+	if( hCaptureWindow == nullptr ) {
+		// 最前面のウィンドウがない場合は，前の領域をそのまま使う
+		*pOutRegion = PrevRegion;
 		
 	} else {
-		RECT clientRect;
-		GetClientRect(hCaptureWindow, &clientRect);
+		if( IsIncludeBorder() ) {
+			GetWindowRect(hCaptureWindow, pOutRegion);
+			
+		} else {
+			RECT clientRect;
+			GetClientRect(hCaptureWindow, &clientRect);
+			
+			POINT lt = { 0, 0 };
+			ClientToScreen(hCaptureWindow, &lt);
+			POINT rb = { clientRect.right, clientRect.bottom };
+			ClientToScreen(hCaptureWindow, &rb);
+			
+			pOutRegion->left = lt.x;
+			pOutRegion->top = lt.y;
+			pOutRegion->right = rb.x;
+			pOutRegion->bottom = rb.y;
+			
+		}
 		
-		POINT lt = { 0, 0 };
-		ClientToScreen(hCaptureWindow, &lt);
-		POINT rb = { clientRect.right, clientRect.bottom };
-		ClientToScreen(hCaptureWindow, &rb);
-		
-		pOutRegion->left = lt.x;
-		pOutRegion->top = lt.y;
-		pOutRegion->right = rb.x;
-		pOutRegion->bottom = rb.y;
+		ClampOutOfRegion(pOutRegion);
+		PrevRegion = *pOutRegion;
 		
 	}
-	
-	ClampOutOfRegion(pOutRegion);
 	
 }
 
