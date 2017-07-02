@@ -607,14 +607,36 @@ void RegionSelectWindow::OnMouseMoved(wxMouseEvent &ev) {
 void RegionSelectWindow::DrawRegion(wxDC &dc) {
 	wxMemoryDC backDC(*pBackbufferBitmap);
 	backDC.DrawBitmap(*pDesktopBitmap, 0, 0);
-	backDC.SetPen(wxPen(wxColour(255, 128, 0), 2));
+	backDC.SetPen(wxPen(wxColour(255, 128, 0), 4));
 	backDC.SetBrush(wxBrush(wxColour(0, 0, 0), wxBRUSHSTYLE_TRANSPARENT));
 	backDC.DrawRectangle(RegionStartX, RegionStartY,
 		RegionEndX - RegionStartX,
 		RegionEndY - RegionStartY);
+	if( !IsMousePressingFlag ) DrawInstruction(backDC);
 	dc.Blit(
 		wxPoint(0, 0), wxSize(DesktopWidth, DesktopHeight),
 		&backDC, wxPoint(0, 0));
+}
+
+// 選択範囲の説明を描画
+void RegionSelectWindow::DrawInstruction(wxDC &dc) {
+	wxString instMsg = L"マウスでドラッグして範囲選択します";
+	
+	dc.SetFont(wxFont(50, wxFONTFAMILY_DEFAULT,
+		wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	dc.SetTextForeground(wxColour(255, 255, 255));
+	wxSize textExtent = dc.GetTextExtent(instMsg);
+	
+	dc.SetPen(wxPen(wxColour(10, 10, 10)));
+	dc.SetBrush(wxBrush(wxColour(10, 10, 10)));
+	dc.DrawRectangle(wxRect(
+		(DesktopWidth - (textExtent.GetWidth() + 50)) / 2,
+		(DesktopHeight - (textExtent.GetHeight() + 50)) / 2,
+		textExtent.GetWidth() + 50, textExtent.GetHeight() + 50));
+	
+	wxRect rc(0, 0, DesktopWidth, DesktopHeight);
+	dc.DrawLabel(instMsg, rc, wxALIGN_CENTER);
+	
 }
 
 void RegionSelectWindow::CaptureDesktop(wxImage *pOutImage) {

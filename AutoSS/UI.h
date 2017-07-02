@@ -176,6 +176,9 @@ private:
 	void OnMouseReleased(wxMouseEvent &ev);
 	void OnMouseMoved(wxMouseEvent &ev);
 	
+	// 選択範囲の説明を描画
+	void DrawInstruction(wxDC &dc);
+	
 	// 選択範囲を描画
 	void DrawRegion(wxDC &dc);
 	
