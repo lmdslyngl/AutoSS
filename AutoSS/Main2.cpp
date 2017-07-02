@@ -185,11 +185,6 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 	if( pConf->RegionMode == CAPTURE_REGION_ACTIVE_WINDOW ) {
 		pCapRegion = std::make_shared<CaptureRegionActiveWindow>(
 			pConf->IncludeBorder);
-	} else if( pConf->RegionMode == CAPTURE_REGION_SELECTED_WINDOW ) {
-		wxMessageBox(
-			L"指定ウィンドウ連写はまだ実装されていません", L"AutoSS",
-			wxOK | wxICON_ERROR);
-		return false;
 	} else if( pConf->RegionMode == CAPTURE_REGION_SELECTED_REGION ) {
 		pCapRegion = std::make_shared<CaptureRegionSelectedRegion>(
 			pConf->RegionX, pConf->RegionY,

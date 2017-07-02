@@ -221,7 +221,6 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 		0, nullptr, wxCB_READONLY);
 	pRegionCombo->Bind(wxEVT_COMBOBOX, &ConfigFrame::OnRegionComboChanged, this);
 	pRegionCombo->Append(L"アクティブウィンドウ");
-	pRegionCombo->Append(L"指定ウィンドウ");
 	pRegionCombo->Append(L"選択範囲");
 	pRegionCombo->Append(L"フルスクリーン");
 	pRegionCombo->Select(pInitConf->RegionMode);
@@ -479,7 +478,7 @@ void ConfigFrame::OnRegionComboChanged(wxCommandEvent &ev) {
 void ConfigFrame::UpdateRegionSelectionEnabling() {
 	CAPTURE_REGION region = (CAPTURE_REGION)pRegionCombo->GetSelection();
 	
-	if( region == CAPTURE_REGION_ACTIVE_WINDOW || region == CAPTURE_REGION_SELECTED_WINDOW ) {
+	if( region == CAPTURE_REGION_ACTIVE_WINDOW ) {
 		pIncludeBorderCheck->Enable();
 	} else {
 		pIncludeBorderCheck->Disable();
