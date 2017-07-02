@@ -168,6 +168,11 @@ public:
 	// デスクトップの画像を更新
 	void UpdateScreenShot();
 	
+	// キャンセルされたかどうか
+	bool IsCanceled() const {
+		return IsCanceledFlag;
+	}
+	
 private:
 	
 	void OnPaint(wxPaintEvent &ev);
@@ -175,6 +180,7 @@ private:
 	void OnMousePressed(wxMouseEvent &ev);
 	void OnMouseReleased(wxMouseEvent &ev);
 	void OnMouseMoved(wxMouseEvent &ev);
+	void OnMouseCanceled(wxMouseEvent &ev);
 	
 	// 選択範囲の説明を描画
 	void DrawInstruction(wxDC &dc);
@@ -198,6 +204,7 @@ private:
 	int DesktopWidth, DesktopHeight;
 	
 	std::function<void()> RegionFinishedCallbackFunc;
+	bool IsCanceledFlag;
 	
 };
 

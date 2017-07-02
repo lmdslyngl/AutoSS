@@ -509,12 +509,14 @@ void ConfigFrame::OnRegionSelect(wxCommandEvent &ev) {
 }
 
 void ConfigFrame::OnRegionSelectFinished() {
-	int startX, startY, endX, endY;
-	pRgnSelWnd->GetRegion(&startX, &startY, &endX, &endY);
-	pRegionXText->SetValue(std::to_string(startX));
-	pRegionYText->SetValue(std::to_string(startY));
-	pRegionWidthText->SetValue(std::to_string(endX - startX));
-	pRegionHeightText->SetValue(std::to_string(endY - startY));
+	if( !pRgnSelWnd->IsCanceled() ) {
+		int startX, startY, endX, endY;
+		pRgnSelWnd->GetRegion(&startX, &startY, &endX, &endY);
+		pRegionXText->SetValue(std::to_string(startX));
+		pRegionYText->SetValue(std::to_string(startY));
+		pRegionWidthText->SetValue(std::to_string(endX - startX));
+		pRegionHeightText->SetValue(std::to_string(endY - startY));
+	}
 }
 
 void ConfigFrame::OnClose(wxCloseEvent &ev) {
@@ -539,6 +541,7 @@ RegionSelectWindow::RegionSelectWindow()
 	RegionEndX = 0;
 	RegionEndY = 0;
 	IsMousePressingFlag = false;
+	IsCanceledFlag = false;
 	
 	// デスクトップのサイズ
 	DesktopWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
@@ -553,6 +556,7 @@ RegionSelectWindow::RegionSelectWindow()
 	Bind(wxEVT_LEFT_DOWN, &RegionSelectWindow::OnMousePressed, this);
 	Bind(wxEVT_LEFT_UP, &RegionSelectWindow::OnMouseReleased, this);
 	Bind(wxEVT_MOTION, &RegionSelectWindow::OnMouseMoved, this);
+	Bind(wxEVT_RIGHT_DOWN, &RegionSelectWindow::OnMouseCanceled, this);
 	
 	SetSize(wxSize(DesktopWidth, DesktopHeight));
 	
@@ -591,6 +595,7 @@ void RegionSelectWindow::OnMouseReleased(wxMouseEvent &ev) {
 	RegionEndX = ev.GetX();
 	RegionEndY = ev.GetY();
 	DrawRegion(wxClientDC(this));
+	IsCanceledFlag = false;
 	if( RegionFinishedCallbackFunc ) RegionFinishedCallbackFunc();
 	Hide();
 }
@@ -601,6 +606,13 @@ void RegionSelectWindow::OnMouseMoved(wxMouseEvent &ev) {
 		RegionEndY = ev.GetY();
 		DrawRegion(wxClientDC(this));
 	}
+}
+
+void RegionSelectWindow::OnMouseCanceled(wxMouseEvent &ev) {
+	IsMousePressingFlag = false;
+	IsCanceledFlag = true;
+	if( RegionFinishedCallbackFunc ) RegionFinishedCallbackFunc();
+	Hide();
 }
 
 // 選択範囲を描画
