@@ -24,6 +24,7 @@ void Config::Load(const std::wstring &conffile) {
 	RegionY = std::stoi(mapKeyValues[L"RegionY"]);
 	RegionWidth = std::stoi(mapKeyValues[L"RegionWidth"]);
 	RegionHeight = std::stoi(mapKeyValues[L"RegionHeight"]);
+	MaxCaptureCount = std::stoi(mapKeyValues[L"MaxCaptureCount"]);
 	
 }
 
@@ -42,6 +43,7 @@ void Config::Save(const std::wstring &conffile) {
 	ss << L"RegionY=" << std::to_wstring(RegionY) << L"\n";
 	ss << L"RegionWidth=" << std::to_wstring(RegionWidth) << L"\n";
 	ss << L"RegionHeight=" << std::to_wstring(RegionHeight) << L"\n";
+	ss << L"MaxCaptureCount=" << std::to_wstring(MaxCaptureCount) << L"\n";
 	WriteUtf8File(conffile, ss.str());
 }
 

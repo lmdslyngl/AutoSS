@@ -59,6 +59,7 @@ public:
 	CAPTURE_REGION RegionMode;
 	int RegionX, RegionY;
 	int RegionWidth, RegionHeight;
+	int MaxCaptureCount;
 	
 private:
 	// 設定ファイルをキーと値に切り分ける
