@@ -127,6 +127,7 @@ private:
 	wxTextCtrl *pRegionWidthText;
 	wxTextCtrl *pRegionHeightText;
 	wxButton *pRegionSelectBtn;
+	wxTextCtrl *pMaxCapCountText;
 	wxButton *pHotkeyRegButton;
 	wxTextCtrl *pHotkeyText;
 	bool RegisteringHotkey;

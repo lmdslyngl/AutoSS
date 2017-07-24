@@ -246,6 +246,18 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pDialogSizer->AddStretchSpacer();
 	pDialogSizer->Add(pRegionSelectPanel);
 	
+	
+	//
+	// 最大撮影枚数
+	//
+	wxStaticText *pMaxCapCountLabel = new wxStaticText(this, wxID_ANY, L"最大撮影枚数");
+	pMaxCapCountText = new wxTextCtrl(this, wxID_ANY, "",
+		wxDefaultPosition, wxSize(50, -1), 0, intValid);
+	
+	pDialogSizer->Add(pMaxCapCountLabel, wxSizerFlags().CenterVertical().Right());
+	pDialogSizer->Add(pMaxCapCountText, wxSizerFlags().CenterVertical());
+	
+	
 	//
 	// ホットキー
 	//
