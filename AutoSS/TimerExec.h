@@ -72,6 +72,10 @@ public:
 		if( RunnerThread.joinable() ) RunnerThread.join();
 	}
 	
+	void StopWithoutJoin() {
+		RunningFlag = false;
+	}
+	
 	void SetWaitTime(int waitTime) {
 		this->WaitTime = waitTime;
 	}
