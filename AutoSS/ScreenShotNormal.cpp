@@ -9,7 +9,8 @@ ScreenShot2::ScreenShot2(
 	std::shared_ptr<ImageWriterBase> &pWriter,
 	const std::wstring &savePathFormat,
 	int waitTimeMillisec,
-	const std::shared_ptr<CaptureRegionBase> &pRegion)
+	const std::shared_ptr<CaptureRegionBase> &pRegion,
+	int maxCaptureCount)
 	: ScreenShotBase()
 {
 	
@@ -17,6 +18,7 @@ ScreenShot2::ScreenShot2(
 	this->SetWriter(pWriter);
 	this->SetSavePathFormat(savePathFormat);
 	this->SetCaptureRegion(pRegion);
+	this->MaxCaptureCount = maxCaptureCount;
 	
 	pTimer = std::make_unique<TimerExec>(
 		[this](void *ptr) { this->TakeSSFunc(ptr); },
@@ -24,8 +26,13 @@ ScreenShot2::ScreenShot2(
 	
 }
 
+ScreenShot2::~ScreenShot2() {
+	pTimer->Stop();
+}
+
 // 連写開始
 void ScreenShot2::Start() {
+	pTimer->Stop();
 	TakenCount = 0;
 	CapStart = std::chrono::system_clock::now();
 	pTimer->Start();
@@ -33,7 +40,7 @@ void ScreenShot2::Start() {
 
 // 連写終了
 void ScreenShot2::Stop() {
-	pTimer->Stop();
+	pTimer->StopWithoutJoin();
 	
 	// FPS計算
 	auto end = std::chrono::system_clock::now();
@@ -64,7 +71,14 @@ void ScreenShot2::TakeSSFunc(void *ptr) {
 	pWriter->Write(savename, sswidth, ssheight,
 		vecImgBuffer.data(), vecImgBuffer.size());
 	
-	TakenCount++;
+	if( 0 < MaxCaptureCount && MaxCaptureCount - 1 <= TakenCount ) {
+		// 最大撮影枚数に到達したときは終了
+		Stop();
+		
+	} else {
+		// 最大撮影枚数が設定されていない，または到達していない場合はそのまま続行
+		TakenCount++;
+	}
 	
 }
 

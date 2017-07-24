@@ -13,7 +13,10 @@ public:
 		std::shared_ptr<ImageWriterBase> &pWriter,
 		const std::wstring &savePathFormat,
 		int waitTimeMillisec,
-		const std::shared_ptr<CaptureRegionBase> &pRegion);
+		const std::shared_ptr<CaptureRegionBase> &pRegion,
+		int maxCaptureCount);
+	
+	~ScreenShot2();
 	
 	// 連写開始
 	virtual void Start();
@@ -37,6 +40,7 @@ protected:
 	void TakeSSFunc(void *ptr);
 	
 protected:
+	int MaxCaptureCount;
 	std::unique_ptr<TimerExec> pTimer;
 	std::vector<unsigned char> vecImgBuffer;
 	std::chrono::time_point<std::chrono::system_clock> CapStart;

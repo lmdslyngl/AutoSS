@@ -202,7 +202,8 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 	} else {
 		pSS = std::make_unique<ScreenShot2>(
 			pCap, pImageWriter, L"",
-			pConf->WaitTime, pCapRegion);
+			pConf->WaitTime, pCapRegion,
+			pConf->MaxCaptureCount);
 	}
 	pSS->SetOnFinishedFunc([this]() { this->OnCaptureFinished(); });
 	
