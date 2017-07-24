@@ -251,7 +251,8 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	// 最大撮影枚数
 	//
 	wxStaticText *pMaxCapCountLabel = new wxStaticText(this, wxID_ANY, L"最大撮影枚数");
-	pMaxCapCountText = new wxTextCtrl(this, wxID_ANY, "",
+	pMaxCapCountText = new wxTextCtrl(this, wxID_ANY, 
+		std::to_string(pInitConf->MaxCaptureCount),
 		wxDefaultPosition, wxSize(50, -1), 0, intValid);
 	
 	pDialogSizer->Add(pMaxCapCountLabel, wxSizerFlags().CenterVertical().Right());
