@@ -407,6 +407,7 @@ std::shared_ptr<Config> ConfigFrame::GetConfig() const {
 	pConf->RegionY = std::stoi(pRegionYText->GetValue().ToStdString());
 	pConf->RegionWidth = std::stoi(pRegionWidthText->GetValue().ToStdString());
 	pConf->RegionHeight = std::stoi(pRegionHeightText->GetValue().ToStdString());
+	pConf->MaxCaptureCount = std::stoi(pMaxCapCountText->GetValue().ToStdString());
 	return pConf;
 }
 
