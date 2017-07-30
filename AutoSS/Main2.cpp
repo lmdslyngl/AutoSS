@@ -20,6 +20,7 @@
 #include "ScreenShotBurst.h"
 #include "CaptureRegion.h"
 #include "Config.h"
+#include "Logger.h"
 
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -73,6 +74,10 @@ bool AutoSSApp::OnInit() {
 		return false;
 	}
 	
+	// logger初期化
+	GlbLog::SetupGlobalLogger(L"AutoSS_dbg.log");
+	GlbLog::GetLogger().Write(L"AutoSS Launched");
+	
 	// 設定ファイル読み込み
 	pConf = std::make_unique<Config>();
 	try {
@@ -117,6 +122,7 @@ bool AutoSSApp::OnInit() {
 
 int AutoSSApp::OnExit() {
 	pConf->Save(L"AutoSS.ini");
+	GlbLog::GetLogger().Write(L"Exit AutoSS");
 	return wxApp::OnExit();
 }
 
