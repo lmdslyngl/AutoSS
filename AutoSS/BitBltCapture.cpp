@@ -54,7 +54,7 @@ void BitBltCapture::Setup(HINSTANCE hInstance, std::shared_ptr<DummyWindow> pWin
 	bmi.bmiHeader.biWidth = SSBitmapWidth;
 	bmi.bmiHeader.biHeight = -SSBitmapHeight;
 	bmi.bmiHeader.biPlanes = 1;
-	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biBitCount = 24;
 	bmi.bmiHeader.biCompression = BI_RGB;
 
 	HDC hDC = GetDC(hWindowDummy);
@@ -86,22 +86,17 @@ void BitBltCapture::CaptureRegion(
 	unsigned int necessaryBufLen = capturedWidth * capturedHeight * 3;
 	assert(necessaryBufLen <= bufferLength);
 	
-	BitBlt(hSSBitmapMemDC, 0, 0, SSBitmapWidth, SSBitmapHeight,
-		hDesktopDC, 0, 0, SRCCOPY);
+	BitBlt(hSSBitmapMemDC, 0, 0, capturedWidth, capturedHeight,
+		hDesktopDC, region->left, region->top, SRCCOPY);
 	
 	const unsigned char *src = (unsigned char*)pSSBitmapPixels;
 	unsigned char *dst = pOutBuffer;
 	
 	// BGRX -> BGR
 	for( int y = 0; y < capturedHeight; y++ ) {
-		const unsigned char *srcrow =
-			&src[((region->top + y) * SSBitmapWidth + region->left) * 4];
-		for( int x = 0; x < capturedWidth; x++ ) {
-			*dst++ = *srcrow++;
-			*dst++ = *srcrow++;
-			*dst++ = *srcrow++;
-			srcrow++;
-		}
+		memcpy(dst, src, capturedWidth * 3);
+		src += SSBitmapWidth * 3;
+		dst += capturedWidth * 3;
 	}
 	
 	*pOutCapturedWidth = capturedWidth;
