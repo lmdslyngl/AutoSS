@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <Windows.h>
+#include <chrono>
 #include "DummyWindow.h"
 
 /*
