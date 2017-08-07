@@ -12,6 +12,9 @@ void ImageWriterBMP::Write(
 	size_t length)
 {
 	
+	int pitch = 3 * width;
+	int numPadding = (4 - (pitch % 4)) % 4;
+	
 	BITMAPINFOHEADER info;
 	info.biSize = sizeof(BITMAPINFOHEADER);
 	info.biWidth = width;
@@ -19,7 +22,7 @@ void ImageWriterBMP::Write(
 	info.biPlanes = 1;
 	info.biBitCount = 24;
 	info.biCompression = 0;
-	info.biSizeImage = 0;
+	info.biSizeImage = (pitch + numPadding) * height;
 	info.biXPelsPerMeter = 0;
 	info.biYPelsPerMeter = 0;
 	info.biClrUsed = 0;
@@ -39,8 +42,6 @@ void ImageWriterBMP::Write(
 	ofs.write((const char*)&header, sizeof(BITMAPFILEHEADER));
 	ofs.write((const char*)&info, sizeof(BITMAPINFOHEADER));
 	
-	int pitch = 3 * width;
-	int numPadding = (4 - (pitch % 4)) % 4;
 	unsigned char zeros[4] = { 0, 0, 0, 0 };
 	
 	for( int r = height - 1; 0 <= r; r-- ) {
