@@ -64,6 +64,9 @@ wxIMPLEMENT_APP(AutoSSApp);
 bool AutoSSApp::OnInit() {
 	if( !wxApp::OnInit() ) return false;
 	
+	// Loggerを初期化
+	GlbLog::SetupGlobalLogger(L"AutoSS_dbg.log");
+	
 	// 多重起動かどうかをチェック
 	pSingleChecker = std::make_unique<wxSingleInstanceChecker>();
 	if( pSingleChecker->IsAnotherRunning() ) {
