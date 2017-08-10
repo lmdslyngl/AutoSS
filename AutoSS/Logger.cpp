@@ -5,7 +5,11 @@
 #include "Util.h"
 
 // ログ書き出しクラス
+Logger::Logger() {
+	QuietFlag = true;
+}
 Logger::Logger(const std::wstring &logfile) {
+	QuietFlag = false;
 	ofs.open(logfile, std::ios::app | std::ios::binary);
 }
 Logger::~Logger() {
@@ -14,6 +18,7 @@ Logger::~Logger() {
 
 // メッセージ書き出し
 void Logger::Write(const wchar_t *log) {
+	if( QuietFlag ) return;
 	std::lock_guard<std::mutex> mtxLock(mtx);
 	
 	std::wstringstream ss;
@@ -25,6 +30,7 @@ void Logger::Write(const wchar_t *log) {
 
 // メッセージ書き出し
 void Logger::Write(const std::wstring &log) {
+	if( QuietFlag ) return;
 	Write(log.c_str());
 }
 

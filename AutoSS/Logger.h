@@ -10,7 +10,12 @@
 class Logger {
 public:
 	
+	// ファイルにログを出力しないLoggerを作成
+	Logger();
+	
+	// 出力ファイルを指定してLoggerを作成
 	Logger(const std::wstring &logfile);
+	
 	~Logger();
 	
 	// ログ書き出し
@@ -23,6 +28,7 @@ public:
 	
 	//　フォーマットを指定してログ書き出し
 	template <class ... Args> void Write(const wchar_t *format, Args ... args) {
+		if( QuietFlag ) return;
 		wchar_t buf[2048];
 		swprintf_s(buf, format, args...);
 		Write(buf);
@@ -36,6 +42,7 @@ private:
 private:
 	std::ofstream ofs;
 	std::mutex mtx;
+	bool QuietFlag;
 };
 
 
@@ -43,6 +50,12 @@ private:
 class GlbLog {
 public:
 	
+	// ファイルにログを出力しないLoggerを作成
+	static void SetupGlobalQuietLogger() {
+		pLogger = std::make_unique<Logger>();
+	}
+	
+	// ログファイルを指定してLoggerを作成
 	static void SetupGlobalLogger(const std::wstring &filename) {
 		pLogger = std::make_unique<Logger>(filename);
 	}
