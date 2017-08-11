@@ -17,10 +17,10 @@ public:
 		return DpiY;
 	}
 	
-	int GetScalingX() const {
+	double GetScalingX() const {
 		return ScalingX;
 	}
-	int GetScalingY() const {
+	double GetScalingY() const {
 		return ScalingY;
 	}
 	
