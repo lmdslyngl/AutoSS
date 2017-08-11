@@ -21,6 +21,7 @@
 #include "CaptureRegion.h"
 #include "Config.h"
 #include "Logger.h"
+#include "DPIUtil.h"
 
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -63,6 +64,9 @@ wxIMPLEMENT_APP(AutoSSApp);
 
 bool AutoSSApp::OnInit() {
 	if( !wxApp::OnInit() ) return false;
+	
+	// GlobalDpiUtilを初期化
+	SetupGlobalDpiUtil();
 	
 	// Loggerを初期化
 	GlbLog::SetupGlobalLogger(L"AutoSS_dbg.log");
