@@ -3,6 +3,7 @@
 #include <wx/valnum.h>
 #include <wx/appprogress.h>
 #include "BitBltCapture.h"
+#include "DPIUtil.h"
 
 /*
  * AutoSSウィンドウ
@@ -34,7 +35,8 @@ AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
 	pConfBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnConf, this);
 	pSizer->Add(pConfBtn, wxSizerFlags(1).Expand());
 	
-	SetSize(350, 100);
+	SetSize(350 * pGlbDpiUtil->GetScalingX(),
+		100 * pGlbDpiUtil->GetScalingY());
 	
 	CreateStatusBar(1);
 	SetStatusText(L"Stopped");
@@ -185,7 +187,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxIntegerValidator<unsigned int> intValid(nullptr);
 	pWaitTimeText = new wxTextCtrl(this, wxID_ANY,
 		std::to_string(pInitConf->WaitTime),
-		wxDefaultPosition, wxSize(50, -1), 0, intValid);
+		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1), 0, intValid);
 	
 	pDialogSizer->Add(pWaitTimeLabel, wxSizerFlags().CenterVertical().Right());
 	pDialogSizer->Add(pWaitTimeText, wxSizerFlags().CenterVertical());
@@ -253,7 +255,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxStaticText *pMaxCapCountLabel = new wxStaticText(this, wxID_ANY, L"最大撮影枚数");
 	pMaxCapCountText = new wxTextCtrl(this, wxID_ANY, 
 		std::to_string(pInitConf->MaxCaptureCount),
-		wxDefaultPosition, wxSize(50, -1), 0, intValid);
+		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1), 0, intValid);
 	
 	pDialogSizer->Add(pMaxCapCountLabel, wxSizerFlags().CenterVertical().Right());
 	pDialogSizer->Add(pMaxCapCountText, wxSizerFlags().CenterVertical());
@@ -322,7 +324,8 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionXText = new wxTextCtrl(
 		pRegionSelectPanel, wxID_ANY,
 		std::to_string(pInitConf->RegionX),
-		wxDefaultPosition, wxSize(50, -1), 0, regionValidator);
+		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1),
+		0, regionValidator);
 	
 	// Y
 	wxStaticText *pRegionYLabel = new wxStaticText(
@@ -330,7 +333,8 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionYText = new wxTextCtrl(
 		pRegionSelectPanel, wxID_ANY,
 		std::to_string(pInitConf->RegionY),
-		wxDefaultPosition, wxSize(50, -1), 0, regionValidator);
+		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1),
+		0, regionValidator);
 	
 	// Width
 	wxStaticText *pRegionWLabel = new wxStaticText(
@@ -338,7 +342,8 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionWidthText = new wxTextCtrl(
 		pRegionSelectPanel, wxID_ANY,
 		std::to_string(pInitConf->RegionWidth),
-		wxDefaultPosition, wxSize(50, -1), 0, regionValidator);
+		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1),
+		0, regionValidator);
 	
 	// Height
 	wxStaticText *pRegionHLabel = new wxStaticText(
@@ -346,7 +351,8 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionHeightText = new wxTextCtrl(
 		pRegionSelectPanel, wxID_ANY,
 		std::to_string(pInitConf->RegionHeight),
-		wxDefaultPosition, wxSize(50, -1), 0, regionValidator);
+		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1),
+		0, regionValidator);
 	
 	// 範囲選択ボタン
 	pRegionSelectBtn = new wxButton(
@@ -410,7 +416,6 @@ std::shared_ptr<Config> ConfigFrame::GetConfig() const {
 	pConf->MaxCaptureCount = std::stoi(pMaxCapCountText->GetValue().ToStdString());
 	return pConf;
 }
-
 
 void ConfigFrame::OnSavePathRef(wxCommandEvent &ev) {
 	wxDirDialog dlg(this,
