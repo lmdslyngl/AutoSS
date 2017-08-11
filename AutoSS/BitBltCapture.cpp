@@ -79,8 +79,6 @@ void BitBltCapture::CaptureRegion(
 	assert(pOutBuffer != nullptr);
 	assert(pOutCapturedWidth != nullptr && pOutCapturedHeight != nullptr);
 	
-	auto timerStart = std::chrono::system_clock::now();
-	
 	int capturedWidth = region->right - region->left;
 	int capturedHeight = region->bottom - region->top;
 	unsigned int necessaryBufLen = capturedWidth * capturedHeight * 3;
@@ -101,10 +99,6 @@ void BitBltCapture::CaptureRegion(
 	
 	*pOutCapturedWidth = capturedWidth;
 	*pOutCapturedHeight = capturedHeight;
-	
-	auto timerEnd = std::chrono::system_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
-	GlbLog::GetLogger().Write(L"CaptureRegion: %d ms", duration.count());
 	
 }
 
