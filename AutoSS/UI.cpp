@@ -163,11 +163,15 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	wxStaticText *pSavePathLabel = new wxStaticText(this, wxID_ANY, L"SS保存先");
 	
 	pSavePathText = new wxTextCtrl(this, wxID_ANY, pInitConf->SavePath);
+	pSavePathText->SetToolTip(
+		L"スクリーンショットの保存先を入力します\n"
+		L"空欄にした場合はユーザのピクチャフォルダに保存されます");
 	
 	pSavePathRefButton = new wxButton(
 		this, wxID_ANY, L"参照",
 		wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	pSavePathRefButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnSavePathRef, this);
+	pSavePathRefButton->SetToolTip(L"スクリーンショットの保存先を選択します");
 	
 	pDialogSizer->Add(pSavePathLabel, wxSizerFlags().CenterVertical().Right());
 	
@@ -176,7 +180,6 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pSavePathSizer->AddSpacer(5);
 	pSavePathSizer->Add(pSavePathRefButton, wxSizerFlags().CenterVertical());
 	pDialogSizer->Add(pSavePathSizer, wxSizerFlags().Expand());
-	
 	
 	//
 	// 撮影間隔
@@ -188,6 +191,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pWaitTimeText = new wxTextCtrl(this, wxID_ANY,
 		std::to_string(pInitConf->WaitTime),
 		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1), 0, intValid);
+	pWaitTimeText->SetToolTip(L"撮影間隔をミリ秒単位で設定します");
 	
 	pDialogSizer->Add(pWaitTimeLabel, wxSizerFlags().CenterVertical().Right());
 	pDialogSizer->Add(pWaitTimeText, wxSizerFlags().CenterVertical());
@@ -206,6 +210,9 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pCaptureCombo->Append(L"BitBlt");
 	pCaptureCombo->Append(L"Desktop Duplication API");
 	pCaptureCombo->Select(pInitConf->CaptureMethod);
+	pCaptureCombo->SetToolTip(
+		L"撮影方式を設定します\n"
+		L"通常はBitBlt形式が推奨されます");
 	
 	pDialogSizer->Add(pCaptureLabel, wxSizerFlags().CenterVertical().Right());
 	pDialogSizer->Add(pCaptureCombo, wxSizerFlags().CenterVertical());
@@ -226,6 +233,11 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pRegionCombo->Append(L"選択範囲");
 	pRegionCombo->Append(L"フルスクリーン");
 	pRegionCombo->Select(pInitConf->RegionMode);
+	pRegionCombo->SetToolTip(
+		L"撮影領域を設定します\n"
+		L"アクティブウィンドウ: 最前面のウィンドウを撮影します\n"
+		L"選択範囲: 座標で領域を設定して撮影します\n"
+		L"フルスクリーン: 画面全体を撮影します");
 	
 	pDialogSizer->Add(pRegionLabel, wxSizerFlags().CenterVertical().Right());
 	pDialogSizer->Add(pRegionCombo, wxSizerFlags().CenterVertical());
@@ -256,6 +268,9 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pMaxCapCountText = new wxTextCtrl(this, wxID_ANY, 
 		std::to_string(pInitConf->MaxCaptureCount),
 		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1), 0, intValid);
+	pMaxCapCountText->SetToolTip(
+		L"最大撮影枚数を設定します。最大撮影枚数に達したときに自動的に連写が停止します\n"
+		L"0に設定すると、無制限に連写を行います");
 	
 	pDialogSizer->Add(pMaxCapCountLabel, wxSizerFlags().CenterVertical().Right());
 	pDialogSizer->Add(pMaxCapCountText, wxSizerFlags().CenterVertical());
@@ -277,6 +292,8 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	
 	pHotkeyRegButton = new wxButton(this, wxID_ANY, L"登録開始");
 	pHotkeyRegButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnRegisterHotkey, this);
+	pHotkeyRegButton->SetToolTip(
+		L"連写の開始/停止を行うショートカットキーを設定します");
 	
 	pDialogSizer->Add(pHotkeyLabel, wxSizerFlags().CenterVertical().Right());
 	
@@ -358,6 +375,7 @@ wxPanel *ConfigFrame::CreateRegionSelectPanel(
 	pRegionSelectBtn = new wxButton(
 		pRegionSelectPanel, wxID_ANY, L"マウスで選択");
 	pRegionSelectBtn->Bind(wxEVT_BUTTON, &ConfigFrame::OnRegionSelect, this);
+	pRegionSelectBtn->SetToolTip(L"マウスを用いて撮影範囲を設定します");
 	
 	//
 	// 配置
