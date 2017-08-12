@@ -15,7 +15,6 @@
 #include "BitBltCapture.h"
 #include "DesktopDuplCapture.h"
 #include "ImageWriterBMP.h"
-#include "ImageWriterPPM.h"
 #include "ScreenShotNormal.h"
 #include "ScreenShotBurst.h"
 #include "CaptureRegion.h"
@@ -176,9 +175,7 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 	
 	// 画像書き出しクラス
 	std::shared_ptr<ImageWriterBase> pImageWriter;
-	if( pConf->ImageFormat == IMGFMT_PPM ) {
-		pImageWriter = std::make_shared<ImageWriterPPM>();
-	} else if( pConf->ImageFormat = IMGFMT_BMP ) {
+	if( pConf->ImageFormat == IMGFMT_BMP ) {
 		pImageWriter = std::make_shared<ImageWriterBMP>();
 	} else {
 		wxMessageBox(

@@ -51,10 +51,6 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="ImageWriterPPM.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="Logger.cpp">
       <SubType>
       </SubType>
@@ -114,10 +110,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="ImageWriterBMP.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="ImageWriterPPM.h">
       <SubType>
       </SubType>
     </ClInclude>

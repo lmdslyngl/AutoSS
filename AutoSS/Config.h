@@ -15,7 +15,6 @@ enum CAPTURE_METHOD {
  * 保存形式
 */
 enum IMAGE_FORMAT {
-	IMGFMT_PPM,
 	IMGFMT_BMP
 };
 
@@ -43,7 +42,6 @@ public:
 	// 画像書き出しフォーマットの拡張子を取得
 	std::wstring GetFormatExt() const {
 		if( ImageFormat == IMGFMT_BMP ) return L"bmp";
-		else if( ImageFormat == IMGFMT_PPM ) return L"ppm";
 		return L"";
 	}
 	
