@@ -15,7 +15,6 @@
 #include "DesktopDuplCapture.h"
 #include "ImageWriterBMP.h"
 #include "ScreenShotNormal.h"
-#include "ScreenShotBurst.h"
 #include "CaptureRegion.h"
 #include "Config.h"
 #include "Logger.h"
@@ -37,8 +36,7 @@ private:
 	
 	// ScreenShotクラスを作成
 	std::unique_ptr<ScreenShotBase> CreateSS(
-		const std::shared_ptr<Config> &pConf,
-		bool burstMode);
+		const std::shared_ptr<Config> &pConf);
 	
 	// 現在時刻を文字列で返す
 	std::string GetDateString() const;
@@ -53,7 +51,6 @@ private:
 	std::unique_ptr<ScreenShotBase> pSS;
 	AutoSSFrame *pFrame;
 	std::unique_ptr<wxSingleInstanceChecker> pSingleChecker;
-	bool IsBurstModeFlag;
 };
 
 
@@ -92,8 +89,7 @@ bool AutoSSApp::OnInit() {
 	}
 	
 	// スクリーンショット撮影クラス作成
-	IsBurstModeFlag = false;
-	pSS = CreateSS(pConf, IsBurstModeFlag);
+	pSS = CreateSS(pConf);
 	
 	// メインウィンドウ
 	pFrame = new AutoSSFrame(pConf);
@@ -102,13 +98,6 @@ bool AutoSSApp::OnInit() {
 	pFrame->SetOnChangeConfFunc(
 		[this](const std::shared_ptr<Config> &pConf) {
 			this->OnChangeConf(pConf);
-		}
-	);
-	pFrame->SetOnModeChangeFunc(
-		[this](bool mode) {
-			pSS.reset();
-			pSS = CreateSS(pConf, mode);
-			IsBurstModeFlag = mode;
 		}
 	);
 	
@@ -127,8 +116,7 @@ int AutoSSApp::OnExit() {
 }
 
 std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
-	const std::shared_ptr<Config> &pConf,
-	bool burstMode)
+	const std::shared_ptr<Config> &pConf)
 {
 	
 	// Captureクラス
@@ -199,16 +187,10 @@ std::unique_ptr<ScreenShotBase> AutoSSApp::CreateSS(
 	
 	// スクリーンショットクラス
 	std::unique_ptr<ScreenShotBase> pSS;
-	if( burstMode ) {
-		pSS = std::make_unique<ScreenShotBurst>(
-			pCap, pImageWriter, L"",
-			pCapRegion, 100);
-	} else {
-		pSS = std::make_unique<ScreenShot2>(
-			pCap, pImageWriter, L"",
-			pConf->WaitTime, pCapRegion,
-			pConf->MaxCaptureCount);
-	}
+	pSS = std::make_unique<ScreenShot2>(
+		pCap, pImageWriter, L"",
+		pConf->WaitTime, pCapRegion,
+		pConf->MaxCaptureCount);
 	pSS->SetOnFinishedFunc([this]() { this->OnCaptureFinished(); });
 	
 	return pSS;
@@ -257,7 +239,7 @@ void AutoSSApp::OnStop() {
 void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
 	*this->pConf = *pConf;
 	pSS.reset();
-	pSS = CreateSS(pConf, IsBurstModeFlag);
+	pSS = CreateSS(pConf);
 	if( pSS ) {
 		pFrame->EnableCapture();
 	} else {

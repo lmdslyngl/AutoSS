@@ -24,18 +24,12 @@ AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
 	pStartBtn = new wxButton(pPanel, wxID_ANY, L"Start");
 	pStartBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnStart, this);
 	pSizer->Add(pStartBtn, wxSizerFlags(2).Expand());
-	pSizer->AddSpacer(5);
-	
-	pBurstChk = new wxCheckBox(pPanel, wxID_ANY, L"BurstMode");
-	pBurstChk->Bind(wxEVT_CHECKBOX, &AutoSSFrame::OnBurstCheck, this);
-	pSizer->Add(pBurstChk, wxSizerFlags(1).Expand());
-	pSizer->AddSpacer(5);
 	
 	wxButton *pConfBtn = new wxButton(pPanel, wxID_ANY, L"Config");
 	pConfBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnConf, this);
 	pSizer->Add(pConfBtn, wxSizerFlags(1).Expand());
 	
-	SetSize(350 * pGlbDpiUtil->GetScalingX(),
+	SetSize(250 * pGlbDpiUtil->GetScalingX(),
 		100 * pGlbDpiUtil->GetScalingY());
 	
 	CreateStatusBar(1);
@@ -107,29 +101,14 @@ void AutoSSFrame::Start() {
 	pStartBtn->SetLabel(L"Stop");
 	SetStatusText(L"Taking");
 	if( pProgressIndicator ) pProgressIndicator->SetValue(1);
-	pBurstChk->Disable();
 }
 
 void AutoSSFrame::Stop() {
 	TakingSS = false;
-	if( pBurstChk->GetValue() ) {
-		pStartBtn->SetLabel(L"Burst Start");
-	} else {
-		pStartBtn->SetLabel(L"Start");
-	}
+	pStartBtn->SetLabel(L"Start");
 	if( pProgressIndicator ) pProgressIndicator->SetValue(0);
-	pBurstChk->Enable();
 }
 
-
-void AutoSSFrame::OnBurstCheck(wxCommandEvent &ev) {
-	if( pBurstChk->GetValue() ) {
-		pStartBtn->SetLabelText(L"Burst Start");
-	} else {
-		pStartBtn->SetLabelText(L"Start");
-	}
-	if( OnModeChangeFunc ) OnModeChangeFunc(pBurstChk->GetValue());
-}
 
 /*
  * 設定ダイアログ
