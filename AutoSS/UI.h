@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#define WXUSINGDLL
 #include <wx/wx.h>
 #include <wx/graphics.h>
 

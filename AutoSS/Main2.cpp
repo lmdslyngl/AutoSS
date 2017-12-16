@@ -1,5 +1,4 @@
 ﻿
-#define WXUSINGDLL
 #include <wx/wx.h>
 #include <wx/stdpaths.h>
 #include <wx/snglinst.h>
