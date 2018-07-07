@@ -10,6 +10,11 @@ DesktopDuplCapture::DesktopDuplCapture() {
 }
 
 DesktopDuplCapture::~DesktopDuplCapture() {
+	Release();
+}
+
+// デバイスを開放
+void DesktopDuplCapture::Release() {
 	if( pTexStaging ) pTexStaging->Release();
 	if( pDupl ) pDupl->Release();
 	if( pDeviceContext ) pDeviceContext->Release();
@@ -107,10 +112,23 @@ void DesktopDuplCapture::CaptureRegion(
 	
 	IDXGIResource *pDeskRes = nullptr;
 	DXGI_OUTDUPL_FRAME_INFO frameInfo;
-	pDupl->AcquireNextFrame(500, &frameInfo, &pDeskRes);
+	HRESULT hr = pDupl->AcquireNextFrame(500, &frameInfo, &pDeskRes);
 	
-	// タイムアウトしたときは何もせず直前の画像を維持する
-	if( pDeskRes == nullptr ) return;
+	if( hr == DXGI_ERROR_ACCESS_LOST ) {
+		// Duplicatorのアクセスが失われていたとき
+		// デバイスを一度開放してからもう一度初期化
+		Release();
+		Setup();
+		hr = pDupl->AcquireNextFrame(500, &frameInfo, &pDeskRes);
+		if( FAILED(hr) ) {
+			// 再初期化してもダメなら例外を投げる
+			throw std::exception("Failed to AcquireNextFrame");
+		}
+
+	} else if( hr == DXGI_ERROR_WAIT_TIMEOUT ) {
+		// タイムアウトしたときは何もせず直前の画像を維持する
+		return;
+	}
 	
 	ID3D11Texture2D *pDeskTex = nullptr;
 	pDeskRes->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pDeskTex);

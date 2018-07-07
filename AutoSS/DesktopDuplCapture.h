@@ -23,6 +23,11 @@ public:
 		unsigned char *pOutBuffer, unsigned int bufferLength,
 		int *pOutCapturedWidth, int *pOutCapturedHeight);
 	
+private:
+	
+	// デバイスを開放
+	void Release();
+	
 protected:
 	ID3D11Device *pDevice;
 	ID3D11DeviceContext *pDeviceContext;
