@@ -186,12 +186,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.0\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Tool\lib\wxWidgets-3.1.1\include;D:\Tool\lib\wxWidgets-3.1.1\include\msvc;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.1\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.0\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Tool\lib\wxWidgets-3.1.1\include;D:\Tool\lib\wxWidgets-3.1.1\include\msvc;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.1\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
