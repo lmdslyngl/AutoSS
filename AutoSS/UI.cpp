@@ -62,20 +62,15 @@ void AutoSSFrame::OnConf(wxCommandEvent &ev) {
 	DisableCapture();
 	UnregisterHotKey(HOTKEY_ID_START);	// 設定画面でホットキーが動作しないように
 	pConfigFrame->ShowModal();
-	EnableCapture();
 	
-	if( OnChangeConfFunc && pConfigFrame->GetCloseState() ) {
-		auto pNewConfig = pConfigFrame->GetConfig();
-		OnChangeConfFunc(pNewConfig);
-		
-		// ホットキー変更
-		RegisterHotKey(HOTKEY_ID_START,
-			pNewConfig->HotkeyMod, pNewConfig->HotkeyCodeRaw);
-		
-	} else {
-		// 今までのホットキーを登録
-		RegisterHotKey(HOTKEY_ID_START, pConf->HotkeyMod, pConf->HotkeyCodeRaw);
+	if( pConfigFrame->GetCloseState() ) {
+		// 設定ダイアログでOKボタンが押されていた場合
+		pConf = pConfigFrame->GetConfig();
+		if( OnChangeConfFunc ) OnChangeConfFunc(pConf);
 	}
+	
+	EnableCapture();
+	RegisterHotKey(HOTKEY_ID_START, pConf->HotkeyMod, pConf->HotkeyCodeRaw);
 	
 	pConfigFrame->Destroy();
 	pConfigFrame = nullptr;
