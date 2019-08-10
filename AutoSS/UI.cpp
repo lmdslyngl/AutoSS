@@ -516,7 +516,8 @@ void ConfigFrame::UpdateNotifSoundEnabling() {
 void ConfigFrame::OnStartSoundRef(wxCommandEvent &ev) {
 	wxFileDialog dlg(
 		this, L"連写開始時通知音",
-		wxEmptyString, wxEmptyString,
+		wxEmptyString,
+		pStartNotifSoundText->GetValue(),
 		L"WAVEファイル (*.wav)|*.wav");
 	dlg.ShowModal();
 	wxString path = dlg.GetPath();
@@ -539,7 +540,8 @@ void ConfigFrame::OnStartSoundPlay(wxCommandEvent &ev) {
 void ConfigFrame::OnStopSoundRef(wxCommandEvent &ev) {
 	wxFileDialog dlg(
 		this, L"連写停止時通知音",
-		wxEmptyString, wxEmptyString,
+		wxEmptyString,
+		pStopNotifSoundText->GetValue(),
 		L"WAVEファイル (*.wav)|*.wav");
 	dlg.ShowModal();
 	wxString path = dlg.GetPath();
