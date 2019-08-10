@@ -26,7 +26,7 @@ AutoSSFrame::AutoSSFrame(const std::shared_ptr<Config> &pConf)
 	pStartBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnStart, this);
 	pSizer->Add(pStartBtn, wxSizerFlags(2).Expand());
 	
-	wxButton *pConfBtn = new wxButton(pPanel, wxID_ANY, L"Config");
+	pConfBtn = new wxButton(pPanel, wxID_ANY, L"Config");
 	pConfBtn->Bind(wxEVT_BUTTON, &AutoSSFrame::OnConf, this);
 	pSizer->Add(pConfBtn, wxSizerFlags(1).Expand());
 	
@@ -86,8 +86,10 @@ void AutoSSFrame::OnHotkey(wxKeyEvent &ev) {
 
 void AutoSSFrame::OnStartImpl() {
 	if( TakingSS ) {
+		pConfBtn->Enable();
 		if( OnStopFunc ) OnStopFunc();
 	} else {
+		pConfBtn->Disable();
 		if( OnStartFunc ) OnStartFunc();
 	}
 }

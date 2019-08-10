@@ -54,6 +54,7 @@ private:
 	
 	wxAppProgressIndicator *pProgressIndicator;
 	wxButton *pStartBtn;
+	wxButton *pConfBtn;
 	bool IsEnableCapture;
 	
 	std::function<void()> OnStartFunc;
