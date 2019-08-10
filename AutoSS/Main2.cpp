@@ -19,6 +19,7 @@
 #include "Config.h"
 #include "Logger.h"
 #include "DPIUtil.h"
+#include "NotificationSound.h"
 
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -51,6 +52,7 @@ private:
 	std::unique_ptr<ScreenShotBase> pSS;
 	AutoSSFrame *pFrame;
 	std::unique_ptr<wxSingleInstanceChecker> pSingleChecker;
+	std::unique_ptr<NotificationSound> pNotifSound;
 };
 
 
@@ -87,6 +89,9 @@ bool AutoSSApp::OnInit() {
 			wxOK | wxICON_ERROR);
 		return nullptr;
 	}
+	
+	// 通知音再生クラス初期化
+	pNotifSound = std::make_unique<NotificationSound>();
 	
 	// スクリーンショット撮影クラス作成
 	pSS = CreateSS(pConf);
@@ -214,6 +219,8 @@ std::string AutoSSApp::GetDateString() const {
 }
 
 void AutoSSApp::OnStart() {
+	pNotifSound->PlayStartSound();
+	
 	// スクリーンショットのファイル名フォーマット設定
 	std::wstring savepath = pConf->SavePath;
 	if( pConf->SavePath.empty() ) {
@@ -256,6 +263,8 @@ void AutoSSApp::OnCaptureFinished() {
 		<< L"(fps: " << std::fixed << std::setprecision(2) << pSS->GetCapturedFPS() << L")";
 	pFrame->SetStatusText(statusText.str());
 	
+	pNotifSound->PlayStopSound();
+
 }
 
 
