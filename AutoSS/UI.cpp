@@ -560,9 +560,46 @@ void ConfigFrame::OnStopSoundPlay(wxCommandEvent &ev) {
 }
 
 void ConfigFrame::OnOK(wxCommandEvent &ev) {
+	if( !ValidateConfig() ) return;
 	Close();
 	pRgnSelWnd->Close();
 	CloseState = true;
+}
+
+bool ConfigFrame::ValidateConfig() {
+	// SS保存先存在チェック
+	wxString path = pSavePathText->GetValue();
+	if( !path.empty() && !wxDirExists(path) ) {
+		wxMessageBox(
+			L"存在しないSS保存先が指定されています: " + path,
+			L"AutoSS",
+			wxOK | wxICON_ERROR);
+		return false;
+	}
+	
+	// 通知音存在チェック
+	if( pPlayNotifSoundCheck->GetValue() ) {
+		path = pStartNotifSoundText->GetValue();
+		if( !path.empty() && !wxFileExists(path) ) {
+			wxMessageBox(
+				L"連写開始時通知音として指定された音声ファイルが見つかりません: " + path,
+				L"AutoSS",
+				wxOK | wxICON_ERROR);
+			return false;
+		}
+		
+		path = pStopNotifSoundText->GetValue();
+		if( !path.empty() && !wxFileExists(path) ) {
+			wxMessageBox(
+				L"連写停止時通知音として指定された音声ファイルが見つかりません: " + path,
+				L"AutoSS",
+				wxOK | wxICON_ERROR);
+			return false;
+		}
+	}
+	
+	return true;
+	
 }
 
 void ConfigFrame::OnCancel(wxCommandEvent &ev) {

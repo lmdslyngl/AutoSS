@@ -116,6 +116,9 @@ private:
 	wxPanel *CreateRegionSelectPanel(
 		const std::shared_ptr<Config> &pInitConf);
 	
+	// 設定の検証
+	bool ValidateConfig();
+	
 private:
 	wxTextCtrl *pSavePathText;
 	wxButton *pSavePathRefButton;
