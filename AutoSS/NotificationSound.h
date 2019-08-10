@@ -9,7 +9,9 @@
 class NotificationSound {
 public:
 
-	NotificationSound();
+	NotificationSound(
+		const std::wstring &startSoundPath,
+		const std::wstring &stopSoundPath);
 	~NotificationSound() = default;
 
 	void PlayStartSound();

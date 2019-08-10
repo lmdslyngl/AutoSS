@@ -1,13 +1,16 @@
 
 #include "NotificationSound.h"
 
-NotificationSound::NotificationSound() {
-	pStartSound = std::make_unique<wxSound>("notif_start.wav");
+NotificationSound::NotificationSound(
+	const std::wstring &startSoundPath,
+	const std::wstring &stopSoundPath)
+{
+	pStartSound = std::make_unique<wxSound>(startSoundPath);
 	if( !pStartSound->IsOk() ) {
 		pStartSound = nullptr;
 	}
 
-	pStopSound = std::make_unique<wxSound>("notif_stop.wav");
+	pStopSound = std::make_unique<wxSound>(stopSoundPath);
 	if( !pStopSound->IsOk() ) {
 		pStopSound = nullptr;
 	}
