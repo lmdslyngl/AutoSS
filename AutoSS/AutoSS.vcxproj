@@ -138,32 +138,32 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92CE6C90-ACF1-4CE1-884D-1071523323BE}</ProjectGuid>
     <RootNamespace>AutoSS</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -186,12 +186,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Tool\lib\wxWidgets-3.1.1\include;D:\Tool\lib\wxWidgets-3.1.1\include\msvc;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.1\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Tool\lib\wxWidgets-3.1.2\include;D:\Tool\lib\wxWidgets-3.1.2\include\msvc;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.2\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\Tool\lib\wxWidgets-3.1.1\include;D:\Tool\lib\wxWidgets-3.1.1\include\msvc;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.1\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Tool\lib\wxWidgets-3.1.2\include;D:\Tool\lib\wxWidgets-3.1.2\include\msvc;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Tool\lib\wxWidgets-3.1.2\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>D:\Tool\lib\wxWidgets-3.1.0\include\msvc;D:\Tool\lib\wxWidgets-3.1.0\include;$(IncludePath)</IncludePath>
