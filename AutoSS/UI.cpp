@@ -290,6 +290,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pPlayNotifSoundCheck = new wxCheckBox(this, wxID_ANY, L"");
 	pPlayNotifSoundCheck->SetValue(pInitConf->PlayNotificationSound);
 	pPlayNotifSoundCheck->SetToolTip(L"連続撮影開始時と終了時に通知音を再生します");
+	pPlayNotifSoundCheck->Bind(wxEVT_CHECKBOX, &ConfigFrame::OnPlayNotifChanged, this);
 	
 	pDialogSizer->Add(pPlayNotifSoundLabel, wxSizerFlags().CenterVertical().Right());
 	pDialogSizer->Add(pPlayNotifSoundCheck, wxSizerFlags().CenterVertical());
@@ -360,6 +361,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	
 	Fit();
 	UpdateRegionSelectionEnabling();
+	UpdateNotifSoundEnabling();
 	
 }
 
@@ -486,6 +488,30 @@ void ConfigFrame::OnSavePathRef(wxCommandEvent &ev) {
 	}
 	
 }
+
+void ConfigFrame::OnPlayNotifChanged(wxCommandEvent &ex) {
+	UpdateNotifSoundEnabling();
+}
+
+// 通知音チェックボックスによって通知村選択の有効/無効を更新する
+void ConfigFrame::UpdateNotifSoundEnabling() {
+	if( pPlayNotifSoundCheck->GetValue() ) {
+		pStartNotifSoundText->Enable();
+		pStartNotifSoundRefButton->Enable();
+		pStartNotifSoundPlayButton->Enable();
+		pStopNotifSoundText->Enable();
+		pStopNotifSoundRefButton->Enable();
+		pStopNotifSoundPlayButton->Enable();
+	} else {
+		pStartNotifSoundText->Disable();
+		pStartNotifSoundRefButton->Disable();
+		pStartNotifSoundPlayButton->Disable();
+		pStopNotifSoundText->Disable();
+		pStopNotifSoundRefButton->Disable();
+		pStopNotifSoundPlayButton->Disable();
+	}
+}
+
 
 void ConfigFrame::OnStartSoundRef(wxCommandEvent &ev) {
 	wxFileDialog dlg(

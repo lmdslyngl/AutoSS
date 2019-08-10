@@ -88,10 +88,13 @@ public:
 	
 private:
 	void OnSavePathRef(wxCommandEvent &ev);
+	
+	void OnPlayNotifChanged(wxCommandEvent &ex);
 	void OnStartSoundRef(wxCommandEvent &ex);
 	void OnStartSoundPlay(wxCommandEvent &ex);
 	void OnStopSoundRef(wxCommandEvent &ex);
 	void OnStopSoundPlay(wxCommandEvent &ex);
+	
 	void OnOK(wxCommandEvent &ev);
 	void OnCancel(wxCommandEvent &ev);
 	
@@ -106,6 +109,9 @@ private:
 	
 	// 撮影範囲コンボボックスによって選択範囲の有効/無効を更新する
 	void UpdateRegionSelectionEnabling();
+	
+	// 通知音チェックボックスによって通知村選択の有効/無効を更新する
+	void UpdateNotifSoundEnabling();
 	
 	wxPanel *CreateRegionSelectPanel(
 		const std::shared_ptr<Config> &pInitConf);
