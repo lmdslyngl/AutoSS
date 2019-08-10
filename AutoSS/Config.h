@@ -58,6 +58,9 @@ public:
 	int RegionX, RegionY;
 	int RegionWidth, RegionHeight;
 	int MaxCaptureCount;
+	bool PlayNotificationSound;
+	std::wstring StartNotificationSoundPath;
+	std::wstring StopNotificationSoundPath;
 	
 private:
 	// 設定ファイルをキーと値に切り分ける
