@@ -2,6 +2,7 @@
 #include "UI.h"
 #include <wx/valnum.h>
 #include <wx/appprogress.h>
+#include <wx/sound.h>
 #include "BitBltCapture.h"
 #include "DPIUtil.h"
 
@@ -282,6 +283,62 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pDialogSizer->Add(pHotkeySizer);
 	
 	//
+	// 通知音再生設定
+	//
+	wxStaticText *pPlayNotifSoundLabel = new wxStaticText(this, wxID_ANY, L"通知音を再生する");
+	
+	pPlayNotifSoundCheck = new wxCheckBox(this, wxID_ANY, L"");
+	pPlayNotifSoundCheck->SetValue(pInitConf->PlayNotificationSound);
+	pPlayNotifSoundCheck->SetToolTip(L"連続撮影開始時と終了時に通知音を再生します");
+	
+	pDialogSizer->Add(pPlayNotifSoundLabel, wxSizerFlags().CenterVertical().Right());
+	pDialogSizer->Add(pPlayNotifSoundCheck, wxSizerFlags().CenterVertical());
+	
+	// 連写開始時通知音
+	wxStaticText *pStartNotifSoundLabel = new wxStaticText(this, wxID_ANY, L"連写開始時");
+	
+	pStartNotifSoundText = new wxTextCtrl(
+		this, wxID_ANY, pInitConf->StartNotificationSoundPath);
+	pStartNotifSoundRefButton = new wxButton(
+		this, wxID_ANY, L"...",
+		wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	pStartNotifSoundRefButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnStartSoundRef, this);
+	pStartNotifSoundPlayButton = new wxButton(
+		this, wxID_ANY, L"再生",
+		wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	pStartNotifSoundPlayButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnStartSoundPlay, this);
+	
+	wxBoxSizer *pStartNotifSoundSizer = new wxBoxSizer(wxHORIZONTAL);
+	pStartNotifSoundSizer->Add(pStartNotifSoundText, wxSizerFlags(1).CenterVertical());
+	pStartNotifSoundSizer->Add(pStartNotifSoundRefButton);
+	pStartNotifSoundSizer->Add(pStartNotifSoundPlayButton);
+	
+	pDialogSizer->Add(pStartNotifSoundLabel, wxSizerFlags().CenterVertical().Right());
+	pDialogSizer->Add(pStartNotifSoundSizer, wxSizerFlags().Expand());
+	
+	// 連写停止時通知音
+	wxStaticText *pStopNotifSoundLabel = new wxStaticText(this, wxID_ANY, L"連写停止時");
+	
+	pStopNotifSoundText = new wxTextCtrl(
+		this, wxID_ANY, pInitConf->StopNotificationSoundPath);
+	pStopNotifSoundRefButton = new wxButton(
+		this, wxID_ANY, L"...",
+		wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	pStopNotifSoundRefButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnStopSoundRef, this);
+	pStopNotifSoundPlayButton = new wxButton(
+		this, wxID_ANY, L"再生",
+		wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	pStopNotifSoundPlayButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnStopSoundPlay, this);
+	
+	wxBoxSizer *pStopNotifSoundSizer = new wxBoxSizer(wxHORIZONTAL);
+	pStopNotifSoundSizer->Add(pStopNotifSoundText, wxSizerFlags(1).CenterVertical());
+	pStopNotifSoundSizer->Add(pStopNotifSoundRefButton);
+	pStopNotifSoundSizer->Add(pStopNotifSoundPlayButton);
+	
+	pDialogSizer->Add(pStopNotifSoundLabel, wxSizerFlags().CenterVertical().Right());
+	pDialogSizer->Add(pStopNotifSoundSizer, wxSizerFlags().Expand());
+	
+	//
 	// OK，キャンセル
 	//
 	
@@ -411,6 +468,9 @@ std::shared_ptr<Config> ConfigFrame::GetConfig() const {
 	pConf->RegionWidth = std::stoi(pRegionWidthText->GetValue().ToStdString());
 	pConf->RegionHeight = std::stoi(pRegionHeightText->GetValue().ToStdString());
 	pConf->MaxCaptureCount = std::stoi(pMaxCapCountText->GetValue().ToStdString());
+	pConf->PlayNotificationSound = pPlayNotifSoundCheck->GetValue();
+	pConf->StartNotificationSoundPath = pStartNotifSoundText->GetValue();
+	pConf->StopNotificationSoundPath = pStopNotifSoundText->GetValue();
 	return pConf;
 }
 
@@ -425,6 +485,40 @@ void ConfigFrame::OnSavePathRef(wxCommandEvent &ev) {
 		pSavePathText->SetValue(path);
 	}
 	
+}
+
+void ConfigFrame::OnStartSoundRef(wxCommandEvent &ev) {
+	wxFileDialog dlg(
+		this, L"連写開始時通知音",
+		wxEmptyString, wxEmptyString,
+		L"WAVEファイル (*.wav)|*.wav");
+	dlg.ShowModal();
+	wxString path = dlg.GetPath();
+	if( !path.empty() ) {
+		pStartNotifSoundText->SetValue(path);
+	}
+}
+
+void ConfigFrame::OnStartSoundPlay(wxCommandEvent &ev) {
+	wxSound snd(pStartNotifSoundText->GetValue());
+	if( snd.IsOk() ) snd.Play();
+}
+
+void ConfigFrame::OnStopSoundRef(wxCommandEvent &ev) {
+	wxFileDialog dlg(
+		this, L"連写停止時通知音",
+		wxEmptyString, wxEmptyString,
+		L"WAVEファイル (*.wav)|*.wav");
+	dlg.ShowModal();
+	wxString path = dlg.GetPath();
+	if( !path.empty() ) {
+		pStopNotifSoundText->SetValue(path);
+	}
+}
+
+void ConfigFrame::OnStopSoundPlay(wxCommandEvent &ev) {
+	wxSound snd(pStopNotifSoundText->GetValue());
+	if( snd.IsOk() ) snd.Play();
 }
 
 void ConfigFrame::OnOK(wxCommandEvent &ev) {

@@ -88,6 +88,10 @@ public:
 	
 private:
 	void OnSavePathRef(wxCommandEvent &ev);
+	void OnStartSoundRef(wxCommandEvent &ex);
+	void OnStartSoundPlay(wxCommandEvent &ex);
+	void OnStopSoundRef(wxCommandEvent &ex);
+	void OnStopSoundPlay(wxCommandEvent &ex);
 	void OnOK(wxCommandEvent &ev);
 	void OnCancel(wxCommandEvent &ev);
 	
@@ -124,6 +128,13 @@ private:
 	wxTextCtrl *pHotkeyText;
 	bool RegisteringHotkey;
 	int HotkeyCode, HotkeyCodeRaw, HotkeyMod;
+	wxCheckBox *pPlayNotifSoundCheck;
+	wxTextCtrl *pStartNotifSoundText;
+	wxButton *pStartNotifSoundRefButton;
+	wxButton *pStartNotifSoundPlayButton;
+	wxTextCtrl *pStopNotifSoundText;
+	wxButton *pStopNotifSoundRefButton;
+	wxButton *pStopNotifSoundPlayButton;
 	wxButton *pOKButton, *pCancelButton;
 	bool CloseState;
 	RegionSelectWindow *pRgnSelWnd;
