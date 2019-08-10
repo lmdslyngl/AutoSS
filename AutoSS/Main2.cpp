@@ -91,7 +91,9 @@ bool AutoSSApp::OnInit() {
 	}
 	
 	// 通知音再生クラス初期化
-	pNotifSound = std::make_unique<NotificationSound>();
+	pNotifSound = std::make_unique<NotificationSound>(
+		pConf->StartNotificationSoundPath,
+		pConf->StopNotificationSoundPath);
 	
 	// スクリーンショット撮影クラス作成
 	pSS = CreateSS(pConf);
@@ -219,7 +221,7 @@ std::string AutoSSApp::GetDateString() const {
 }
 
 void AutoSSApp::OnStart() {
-	pNotifSound->PlayStartSound();
+	if( pConf->PlayNotificationSound ) pNotifSound->PlayStartSound();
 	
 	// スクリーンショットのファイル名フォーマット設定
 	std::wstring savepath = pConf->SavePath;
@@ -252,6 +254,9 @@ void AutoSSApp::OnChangeConf(const std::shared_ptr<Config> &pConf) {
 	} else {
 		pFrame->DisableCapture();
 	}
+	pNotifSound = std::make_unique<NotificationSound>(
+		pConf->StartNotificationSoundPath,
+		pConf->StopNotificationSoundPath);
 }
 
 void AutoSSApp::OnCaptureFinished() {
@@ -263,7 +268,7 @@ void AutoSSApp::OnCaptureFinished() {
 		<< L"(fps: " << std::fixed << std::setprecision(2) << pSS->GetCapturedFPS() << L")";
 	pFrame->SetStatusText(statusText.str());
 	
-	pNotifSound->PlayStopSound();
+	if( pConf->PlayNotificationSound ) pNotifSound->PlayStopSound();
 
 }
 
