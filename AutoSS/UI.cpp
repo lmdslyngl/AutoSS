@@ -500,8 +500,14 @@ void ConfigFrame::OnStartSoundRef(wxCommandEvent &ev) {
 }
 
 void ConfigFrame::OnStartSoundPlay(wxCommandEvent &ev) {
-	wxSound snd(pStartNotifSoundText->GetValue());
-	if( snd.IsOk() ) snd.Play();
+	wxString soundFilePath = pStartNotifSoundText->GetValue();
+	if( !wxFileExists(soundFilePath) ) {
+		wxMessageBox(
+			L"音声ファイルが見つかりません: " + soundFilePath,
+			L"AutoSS",
+			wxOK | wxICON_ERROR);
+	}
+	wxSound::Play(soundFilePath);
 }
 
 void ConfigFrame::OnStopSoundRef(wxCommandEvent &ev) {
@@ -517,8 +523,14 @@ void ConfigFrame::OnStopSoundRef(wxCommandEvent &ev) {
 }
 
 void ConfigFrame::OnStopSoundPlay(wxCommandEvent &ev) {
-	wxSound snd(pStopNotifSoundText->GetValue());
-	if( snd.IsOk() ) snd.Play();
+	wxString soundFilePath = pStopNotifSoundText->GetValue();
+	if( !wxFileExists(soundFilePath) ) {
+		wxMessageBox(
+			L"音声ファイルが見つかりません: " + soundFilePath,
+			L"AutoSS",
+			wxOK | wxICON_ERROR);
+	}
+	wxSound::Play(soundFilePath);
 }
 
 void ConfigFrame::OnOK(wxCommandEvent &ev) {
