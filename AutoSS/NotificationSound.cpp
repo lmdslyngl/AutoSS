@@ -8,7 +8,7 @@ NotificationSound::NotificationSound() {
 	}
 
 	pStopSound = std::make_unique<wxSound>("notif_stop.wav");
-	if( pStopSound->IsOk() ) {
+	if( !pStopSound->IsOk() ) {
 		pStopSound = nullptr;
 	}
 }
