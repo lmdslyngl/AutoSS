@@ -141,13 +141,21 @@ public:
 
 private:
 	// UI初期化
-	void InitSavePathUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf);
-	void InitWaitTimeUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf);
-	void InitCaptureMethodUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf);
-	void InitCaptureRegionUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf);
-	void InitMaxCaptureCountUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf);
-	void InitHotKeyUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf);
-	void InitNotifSoundUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf);
+	// スクリーンショット系設定パネル
+	void InitScreenShotPanel(wxWindow *pParent, wxSizer *pSizer);
+	void InitSavePathUI(wxWindow *pParent, wxSizer *pSizer);
+	void InitWaitTimeUI(wxWindow *pParent, wxSizer *pSizer);
+	void InitCaptureMethodUI(wxWindow *pParent, wxSizer *pSizer);
+	void InitCaptureRegionUI(wxWindow *pParent, wxSizer *pSizer);
+	void InitMaxCaptureCountUI(wxWindow *pParent, wxSizer *pSizer);
+	
+	// ホットキー系設定パネル
+	void InitHotKeyPanel(wxWindow *pParent, wxSizer *pSizer);
+	void InitHotKeyUI(wxWindow *pParent, wxSizer *pSizer);
+	
+	// 通知音系設定パネル
+	void InitNotifSoundPanel(wxWindow *pParent, wxSizer *pSizer);
+	void InitNotifSoundUI(wxWindow *pParent, wxSizer *pSizer);
 	
 	void OnPlayNotifChanged(wxCommandEvent &ex);
 	
@@ -173,6 +181,8 @@ private:
 	bool ValidateConfig();
 
 private:
+	std::shared_ptr<Config> pConf;
+	
 	DirectorySelector *pSaveDirSelector;
 	wxTextCtrl *pWaitTimeText;
 	wxComboBox *pCaptureCombo;

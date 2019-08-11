@@ -12,6 +12,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	: wxDialog(pParent, wxID_ANY, L"AutoSS設定")
 {
 	
+	this->pConf = pInitConf;
 	RegisteringHotkey = false;
 	
 	// ホットキー登録用キーイベントフック
@@ -25,19 +26,13 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pRgnSelWnd->SetRegionFinishedCallback(
 		[this]() { this->OnRegionSelectFinished(); });
 	
-	wxFlexGridSizer *pDialogSizer = new wxFlexGridSizer(2, wxSize(5, 5));
-	pDialogSizer->AddSpacer(0);
-	pDialogSizer->AddStretchSpacer();
+	wxFlexGridSizer *pDialogSizer = new wxFlexGridSizer(1, wxSize(10, 10));
 	SetSizer(pDialogSizer);
 	
 	// 各種UI初期化
-	InitSavePathUI(pDialogSizer, pInitConf);
-	InitWaitTimeUI(pDialogSizer, pInitConf);
-	InitCaptureMethodUI(pDialogSizer, pInitConf);
-	InitCaptureRegionUI(pDialogSizer, pInitConf);
-	InitMaxCaptureCountUI(pDialogSizer, pInitConf);
-	InitHotKeyUI(pDialogSizer, pInitConf);
-	InitNotifSoundUI(pDialogSizer, pInitConf);
+	InitScreenShotPanel(this, pDialogSizer);
+	InitHotKeyPanel(this, pDialogSizer);
+	InitNotifSoundPanel(this, pDialogSizer);
 	
 	//
 	// OK，キャンセル
@@ -53,11 +48,7 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	pCancelButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnCancel, this);
 	pOKCancelSizer->Add(pCancelButton);
 	
-	pDialogSizer->AddStretchSpacer();
 	pDialogSizer->Add(pOKCancelSizer, wxSizerFlags().Right());
-	
-	pDialogSizer->AddSpacer(5);
-	pDialogSizer->AddStretchSpacer();
 	
 	Fit();
 	UpdateRegionSelectionEnabling();
@@ -65,9 +56,30 @@ ConfigFrame::ConfigFrame(wxFrame *pParent, const std::shared_ptr<Config> &pInitC
 	
 }
 
-void ConfigFrame::InitSavePathUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf) {
-	wxStaticText *pSavePathLabel = new wxStaticText(this, wxID_ANY, L"SS保存先");
-	pSaveDirSelector = new DirectorySelector(this, pConf->SavePath);
+void ConfigFrame::InitScreenShotPanel(wxWindow *pParent, wxSizer *pSizer) {
+	wxPanel *pStaticBoxPanel = new wxPanel(pParent);
+	
+	wxStaticBoxSizer *pStaticBoxSizer = new wxStaticBoxSizer(
+		wxHORIZONTAL, pStaticBoxPanel, L"連写設定");
+	pStaticBoxPanel->SetSizer(pStaticBoxSizer);
+	wxStaticBox *pStaticBox = pStaticBoxSizer->GetStaticBox();
+	
+	wxFlexGridSizer *pGridSizer = new wxFlexGridSizer(2, wxSize(5, 5));
+	pStaticBoxSizer->Add(pGridSizer);
+	
+	InitSavePathUI(pStaticBox, pGridSizer);
+	InitWaitTimeUI(pStaticBox, pGridSizer);
+	InitCaptureMethodUI(pStaticBox, pGridSizer);
+	InitCaptureRegionUI(pStaticBox, pGridSizer);
+	InitMaxCaptureCountUI(pStaticBox, pGridSizer);
+	
+	pSizer->Add(pStaticBoxPanel);
+	
+}
+
+void ConfigFrame::InitSavePathUI(wxWindow *pParent, wxSizer *pSizer) {
+	wxStaticText *pSavePathLabel = new wxStaticText(pParent, wxID_ANY, L"SS保存先");
+	pSaveDirSelector = new DirectorySelector(pParent, pConf->SavePath);
 	pSaveDirSelector->GetPathTextCtrl()->SetToolTip(
 		L"スクリーンショットの保存先を入力します\n"
 		L"空欄にした場合はユーザのピクチャフォルダに保存されます");
@@ -77,11 +89,11 @@ void ConfigFrame::InitSavePathUI(wxSizer *pSizer, const std::shared_ptr<Config> 
 
 }
 
-void ConfigFrame::InitWaitTimeUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf) {
-	wxStaticText *pWaitTimeLabel = new wxStaticText(this, wxID_ANY, L"撮影間隔（ミリ秒）");
+void ConfigFrame::InitWaitTimeUI(wxWindow *pParent, wxSizer *pSizer) {
+	wxStaticText *pWaitTimeLabel = new wxStaticText(pParent, wxID_ANY, L"撮影間隔（ミリ秒）");
 
 	wxIntegerValidator<unsigned int> intValid(nullptr);
-	pWaitTimeText = new wxTextCtrl(this, wxID_ANY,
+	pWaitTimeText = new wxTextCtrl(pParent, wxID_ANY,
 		std::to_string(pConf->WaitTime),
 		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1), 0, intValid);
 	pWaitTimeText->SetToolTip(L"撮影間隔をミリ秒単位で設定します");
@@ -91,11 +103,11 @@ void ConfigFrame::InitWaitTimeUI(wxSizer *pSizer, const std::shared_ptr<Config> 
 
 }
 
-void ConfigFrame::InitCaptureMethodUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf) {
-	wxStaticText *pCaptureLabel = new wxStaticText(this, wxID_ANY, L"キャプチャ方式");
+void ConfigFrame::InitCaptureMethodUI(wxWindow *pParent, wxSizer *pSizer) {
+	wxStaticText *pCaptureLabel = new wxStaticText(pParent, wxID_ANY, L"キャプチャ方式");
 
 	pCaptureCombo = new wxComboBox(
-		this, wxID_ANY, wxEmptyString,
+		pParent, wxID_ANY, wxEmptyString,
 		wxDefaultPosition, wxDefaultSize,
 		0, nullptr, wxCB_READONLY);
 	pCaptureCombo->Append(L"BitBlt");
@@ -110,12 +122,12 @@ void ConfigFrame::InitCaptureMethodUI(wxSizer *pSizer, const std::shared_ptr<Con
 	
 }
 
-void ConfigFrame::InitCaptureRegionUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf) {
+void ConfigFrame::InitCaptureRegionUI(wxWindow *pParent, wxSizer *pSizer) {
 	// 撮影領域
-	wxStaticText *pRegionLabel = new wxStaticText(this, wxID_ANY, L"撮影範囲");
+	wxStaticText *pRegionLabel = new wxStaticText(pParent, wxID_ANY, L"撮影範囲");
 
 	pRegionCombo = new wxComboBox(
-		this, wxID_ANY, wxEmptyString,
+		pParent, wxID_ANY, wxEmptyString,
 		wxDefaultPosition, wxDefaultSize,
 		0, nullptr, wxCB_READONLY);
 	pRegionCombo->Bind(wxEVT_COMBOBOX, &ConfigFrame::OnRegionComboChanged, this);
@@ -133,14 +145,14 @@ void ConfigFrame::InitCaptureRegionUI(wxSizer *pSizer, const std::shared_ptr<Con
 	pSizer->Add(pRegionCombo, wxSizerFlags().CenterVertical());
 
 	// ウィンドウ枠を含めるかどうか
-	pIncludeBorderCheck = new wxCheckBox(this, wxID_ANY, L"ウィンドウの枠を含める");
+	pIncludeBorderCheck = new wxCheckBox(pParent, wxID_ANY, L"ウィンドウの枠を含める");
 	pIncludeBorderCheck->SetValue(pConf->IncludeBorder);
 
 	pSizer->AddStretchSpacer();
 	pSizer->Add(pIncludeBorderCheck);
 
 	// 範囲選択パネル
-	wxPanel *pRegionPanelParent = new wxPanel(this);
+	wxPanel *pRegionPanelParent = new wxPanel(pParent);
 
 	pRegionSelectPanel = new RegionSelectPanel(
 		pRegionPanelParent,
@@ -158,11 +170,11 @@ void ConfigFrame::InitCaptureRegionUI(wxSizer *pSizer, const std::shared_ptr<Con
 	
 }
 
-void ConfigFrame::InitMaxCaptureCountUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf) {
-	wxStaticText *pMaxCapCountLabel = new wxStaticText(this, wxID_ANY, L"最大撮影枚数");
+void ConfigFrame::InitMaxCaptureCountUI(wxWindow *pParent, wxSizer *pSizer) {
+	wxStaticText *pMaxCapCountLabel = new wxStaticText(pParent, wxID_ANY, L"最大撮影枚数");
 	
 	wxIntegerValidator<unsigned int> intValid(nullptr);
-	pMaxCapCountText = new wxTextCtrl(this, wxID_ANY,
+	pMaxCapCountText = new wxTextCtrl(pParent, wxID_ANY,
 		std::to_string(pConf->MaxCaptureCount),
 		wxDefaultPosition, wxSize(50 * pGlbDpiUtil->GetScalingX(), -1), 0, intValid);
 	pMaxCapCountText->SetToolTip(
@@ -174,18 +186,38 @@ void ConfigFrame::InitMaxCaptureCountUI(wxSizer *pSizer, const std::shared_ptr<C
 	
 }
 
-void ConfigFrame::InitHotKeyUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf) {
+void ConfigFrame::InitHotKeyPanel(wxWindow *pParent, wxSizer *pSizer) {
+	wxPanel *pStaticBoxPanel = new wxPanel(pParent);
+	
+	wxStaticBoxSizer *pStaticBoxSizer = new wxStaticBoxSizer(
+		wxHORIZONTAL, pStaticBoxPanel, L"ホットキー設定");
+	pStaticBoxPanel->SetSizer(pStaticBoxSizer);
+	wxStaticBox *pStaticBox = pStaticBoxSizer->GetStaticBox();
+	
+	wxFlexGridSizer *pGridSizer = new wxFlexGridSizer(2, wxSize(5, 5));
+	pGridSizer->AddGrowableCol(1);
+	pStaticBoxSizer->Add(pGridSizer, wxSizerFlags(1).Expand());
+	
+	InitHotKeyUI(pStaticBox, pGridSizer);
+	
+	pSizer->Add(pStaticBoxPanel, wxSizerFlags(1).Expand());
+	
+}
+
+void ConfigFrame::InitHotKeyUI(wxWindow *pParent, wxSizer *pSizer) {
 	HotkeyMod = pConf->HotkeyMod;
 	HotkeyCode = pConf->HotkeyCode;
 	HotkeyCodeRaw = pConf->HotkeyCodeRaw;
 
-	wxStaticText *pHotkeyLabel = new wxStaticText(this, wxID_ANY, L"ショートカット");
+	wxStaticText *pHotkeyLabel = new wxStaticText(pParent, wxID_ANY, L"ショートカット");
 
-	pHotkeyText = new wxTextCtrl(this, wxID_ANY, L"",
+	pHotkeyText = new wxTextCtrl(pParent, wxID_ANY, L"",
 		wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	pHotkeyText->SetValue(wxAcceleratorEntry(HotkeyMod, HotkeyCode).ToString());
 
-	pHotkeyRegButton = new wxButton(this, wxID_ANY, L"登録開始");
+	pHotkeyRegButton = new wxButton(
+		pParent, wxID_ANY, L"登録開始",
+		wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	pHotkeyRegButton->Bind(wxEVT_BUTTON, &ConfigFrame::OnRegisterHotkey, this);
 	pHotkeyRegButton->SetToolTip(
 		L"連写の開始/停止を行うショートカットキーを設定します");
@@ -193,16 +225,34 @@ void ConfigFrame::InitHotKeyUI(wxSizer *pSizer, const std::shared_ptr<Config> &p
 	pSizer->Add(pHotkeyLabel, wxSizerFlags().CenterVertical().Right());
 
 	wxBoxSizer *pHotkeySizer = new wxBoxSizer(wxHORIZONTAL);
-	pHotkeySizer->Add(pHotkeyText, wxSizerFlags().CenterVertical());
-	pHotkeySizer->Add(pHotkeyRegButton, wxSizerFlags().CenterVertical());
-	pSizer->Add(pHotkeySizer);
+	pHotkeySizer->Add(pHotkeyText, wxSizerFlags(1).Expand());
+	pHotkeySizer->Add(pHotkeyRegButton);
+	pSizer->Add(pHotkeySizer, wxSizerFlags(1).Expand());
 	
 }
 
-void ConfigFrame::InitNotifSoundUI(wxSizer *pSizer, const std::shared_ptr<Config> &pConf) {
-	wxStaticText *pPlayNotifSoundLabel = new wxStaticText(this, wxID_ANY, L"通知音を再生する");
+void ConfigFrame::InitNotifSoundPanel(wxWindow *pParent, wxSizer *pSizer) {
+	wxPanel *pStaticBoxPanel = new wxPanel(pParent);
 
-	pPlayNotifSoundCheck = new wxCheckBox(this, wxID_ANY, L"");
+	wxStaticBoxSizer *pStaticBoxSizer = new wxStaticBoxSizer(
+		wxHORIZONTAL, pStaticBoxPanel, L"通知音設定");
+	pStaticBoxPanel->SetSizer(pStaticBoxSizer);
+	wxStaticBox *pStaticBox = pStaticBoxSizer->GetStaticBox();
+
+	wxFlexGridSizer *pGridSizer = new wxFlexGridSizer(2, wxSize(5, 5));
+	pGridSizer->AddGrowableCol(1);
+	pStaticBoxSizer->Add(pGridSizer, wxSizerFlags(1).Expand());
+
+	InitNotifSoundUI(pStaticBox, pGridSizer);
+
+	pSizer->Add(pStaticBoxPanel, wxSizerFlags(1).Expand());
+	
+}
+
+void ConfigFrame::InitNotifSoundUI(wxWindow *pParent, wxSizer *pSizer) {
+	wxStaticText *pPlayNotifSoundLabel = new wxStaticText(pParent, wxID_ANY, L"通知音を再生する");
+
+	pPlayNotifSoundCheck = new wxCheckBox(pParent, wxID_ANY, L"");
 	pPlayNotifSoundCheck->SetValue(pConf->PlayNotificationSound);
 	pPlayNotifSoundCheck->SetToolTip(L"連続撮影開始時と終了時に通知音を再生します");
 	pPlayNotifSoundCheck->Bind(wxEVT_CHECKBOX, &ConfigFrame::OnPlayNotifChanged, this);
@@ -211,20 +261,20 @@ void ConfigFrame::InitNotifSoundUI(wxSizer *pSizer, const std::shared_ptr<Config
 	pSizer->Add(pPlayNotifSoundCheck, wxSizerFlags().CenterVertical());
 
 	// 連写開始時通知音
-	wxStaticText *pStartNotifSoundLabel = new wxStaticText(this, wxID_ANY, L"連写開始時");
+	wxStaticText *pStartNotifSoundLabel = new wxStaticText(pParent, wxID_ANY, L"連写開始時");
 	pStartSoundSelector = new SoundFileSelector(
-		this, pConf->StartNotificationSoundPath);
+		pParent, pConf->StartNotificationSoundPath);
 
 	pSizer->Add(pStartNotifSoundLabel, wxSizerFlags().CenterVertical().Right());
-	pSizer->Add(pStartSoundSelector, wxSizerFlags().Expand());
+	pSizer->Add(pStartSoundSelector, wxSizerFlags(1).Expand());
 
 	// 連写停止時通知音
-	wxStaticText *pStopNotifSoundLabel = new wxStaticText(this, wxID_ANY, L"連写停止時");
+	wxStaticText *pStopNotifSoundLabel = new wxStaticText(pParent, wxID_ANY, L"連写停止時");
 	pStopSoundSelector = new SoundFileSelector(
-		this, pConf->StopNotificationSoundPath);
+		pParent, pConf->StopNotificationSoundPath);
 
 	pSizer->Add(pStopNotifSoundLabel, wxSizerFlags().CenterVertical().Right());
-	pSizer->Add(pStopSoundSelector, wxSizerFlags().Expand());
+	pSizer->Add(pStopSoundSelector, wxSizerFlags(1).Expand());
 	
 }
 
@@ -564,9 +614,9 @@ SoundFileSelector::SoundFileSelector(wxWindow *pParent, const std::wstring &defa
 	pSoundPlayBtn->Bind(wxEVT_BUTTON, &SoundFileSelector::OnPlaySound, this);
 	
 	wxBoxSizer *pSizer = new wxBoxSizer(wxHORIZONTAL);
-	pSizer->Add(pPathText, wxSizerFlags(1).CenterVertical());
-	pSizer->Add(pPathSelectBtn, wxSizerFlags().CenterVertical());
-	pSizer->Add(pSoundPlayBtn, wxSizerFlags().CenterVertical());
+	pSizer->Add(pPathText, wxSizerFlags(1));
+	pSizer->Add(pPathSelectBtn, wxSizerFlags(0));
+	pSizer->Add(pSoundPlayBtn, wxSizerFlags(0));
 	
 	SetSizer(pSizer);
 	
